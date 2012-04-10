@@ -1,0 +1,12 @@
+#compilation
+g++ -o object_displacement object_displacement.cpp -I../../CImg -Wall -W -lm -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr
+g++ -o object_displacement_loop object_displacement_loop.cpp -I../../CImg -Wall -W -lm -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr
+
+#test
+./object_displacement -i object_displacement_0.png
+ls object_displacement_?.png | ./object_displacement_loop -i stdin
+
+#run
+./object_displacement -i object_displacement_0.png 2> /dev/null
+ls object_displacement_?.png | ./object_displacement_loop -i stdin 2> /dev/null
+

@@ -1,0 +1,15 @@
+#description
+#CImg.display: display a single image as a 2D map, 1D graph or 3D surface in a window
+
+#compile
+g++ -o CImg.display CImg.display.cpp -I../../CImg -Wall -W -lm -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr && ./CImg.display -h
+
+#documentation
+./changeDoxygenPath.sh
+./DoxIt.sh
+
+#run
+./CImg.display -i image.png
+./CImg.display -i image.png --1D
+./CImg.display -i image.png --3D
+

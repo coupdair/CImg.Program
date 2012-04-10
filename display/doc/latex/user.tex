@@ -1,0 +1,68 @@
+\begin{Desc}
+\item[\hyperlink{todo__todo000001}{Todo}]add screen capture \end{Desc}
+\begin{Desc}
+\item[\hyperlink{todo__todo000001}{Todo}]use section (instead of paragraphs) and add table of contents (such as in mainpage)\end{Desc}
+\begin{Desc}
+\item[different type of display for image]\end{Desc}
+3 types of display in this software: \begin{itemize}
+\item 2D map (default) \item 1D graph ({\tt --1D} option) \item 3D surface ({\tt --3D} option)\end{itemize}
+others display command line options using {\tt -h} option 
+
+\begin{VerbInclude}\begin{verbatim}
+ CImg.display : display image as 2D map or/and 1D graph(s) or 3D surface. (Dec  2 2010, 23:35:25)
+
+    -i               image.png                Input image
+    --blur           -1                       Variance of gaussian pre-blurring (e.g. --blur 2.0)
+    --norm           false                    normalize image between 0 and 255 for 8-bit display (e.g. --norm true)
+    --1D             false                    display also profile (i.e. 1D graph with --1D true)
+    --3D             false                    display as 3D surface
+    -o               0                        Output 3D object
+    -z               0.25                     Aspect ratio along z-axis
+    -di              10                       Step for isophote skipping
+    -pi              0                        Input 3D pose  (e.g. pose.cimg)
+    -po              pose.cimg                Output 3D pose (e.g. pose.cimg)
+    --render-type    2                        type of rendering (E[0-6], see GUI: render type)
+    --color-type     true                     type of surface color: true image color, false constant color
+    -h               true                     display this help.
+\end{verbatim}
+\end{VerbInclude}
+
+
+\begin{Desc}
+\item[2D map (default)]display image as map 
+
+\begin{Code}\begin{verbatim}   ./CImg.display -i image.PNG
+\end{verbatim}
+\end{Code}
+
+ GUI keyboard options: \begin{itemize}
+\item {\tt Ctrl+S}: save current view \end{itemize}
+\end{Desc}
+\begin{Desc}
+\item[1D graph]display image as both map and 1D graph(s) (either X axis or Y axis) 
+
+\begin{Code}\begin{verbatim}   ./CImg.display -i image.PNG --1D
+\end{verbatim}
+\end{Code}
+
+ GUI keyboard options: \begin{itemize}
+\item {\tt c:} color \item {\tt v:} value \item {\tt l:} luminance \item {\tt i:} intensity \item {\tt Ctrl+S}: save current view\end{itemize}
+GUI mouse options: \begin{itemize}
+\item {\tt left} button: X axis \item {\tt right} button: Y axis \end{itemize}
+\end{Desc}
+\begin{Desc}
+\item[3D surface]display image as 3D surface (e.g. Gouraud-shaded or isophotes render) 
+
+\begin{Code}\begin{verbatim}   ./CImg.display -i image.PNG --3D
+\end{verbatim}
+\end{Code}
+
+ GUI keyboard options: \begin{itemize}
+\item {\tt F:} toggle Fullscreen \item {\tt Q} or ESC: Quit (i.e. exit)\end{itemize}
+load or save file: \begin{itemize}
+\item {\tt S:} Save displayed image (i.e. 3D view) \item {\tt O:} save pOse (i.e. 3D view parameters) \item {\tt R:} Read pose (i.e. 3D view parameters)\end{itemize}
+render type: \begin{itemize}
+\item {\tt C:} color render (image or constant) \item {\tt T:} poinTs render \item {\tt L:} Lines render \item {\tt A:} fAces render \item {\tt H:} flat-sHaded faces render \item {\tt G:} Gouraud-shaded faces render \item {\tt P:} Phong-shaded faces render \item {\tt I:} Isophotes render \item {\tt BackSpace} : change rendering type (i.e. decrement type) \item any other key : change rendering type (i.e. increment type)\end{itemize}
+GUI mouse options: \begin{itemize}
+\item {\tt left} button: rotate \item {\tt middle} button: move \item {\tt wheel} or {\tt right} button: zoom in/out  \end{itemize}
+\end{Desc}

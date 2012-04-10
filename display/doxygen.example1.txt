@@ -1,0 +1,4 @@
+//!This comment will be both in declaration and explanation of the function
+/**
+ * This comment will be in explanation part only
+**/

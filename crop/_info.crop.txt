@@ -1,0 +1,21 @@
+#compile crop
+##release, 4quadrant, crop
+g++ -o CImg.crop.linux32 CImg.crop.cpp -I../../CImg -Wall -W -lm -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr && \
+./CImg.crop -h && ./CImg.crop -i logo -e .png -x 111 -y 55 && display logo.png && for f in logo_??.png; do display $f; done && \
+./CImg.crop -i logo.png -x 111 -y 55 -sx 128 -sy 64 -o logo_crop.png && display logo_crop.png 
+
+#run crop
+##4 quadrant
+./CImg.crop -i logo -e .png -x 111 -y 55 && identify logo.png && display logo.png && for f in logo_??.png; do identify $f; display $f; done
+##crop
+./CImg.crop -i logo.png -x 111 -y 55 -sx 100 -sy 50 -o logo_crop.png && identify logo_crop.png logo.png && display logo_crop.png
+##add borders (crop)
+./CImg.crop -i logo.png -x -10 -y -10 -sx 278 -sy 135 -o logo_crop.png && identify logo_crop.png logo.png && display logo_crop.png
+##convert (crop)
+./CImg.crop -i logo.png -x 0 -y 0 -sx 258 -sy 115 -o logo_crop.png && identify logo_crop.png logo.png && display logo_crop.png
+exit
+
+#compile crop
+##debug
+g++ -o CImg.crop.linux32_GDB CImg.crop.cpp -I.. -Wall -W -lm -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr -Dcimg_verbosity=3 && ./tutorial -i ./img/logo.bmp
+

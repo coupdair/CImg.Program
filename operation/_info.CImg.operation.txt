@@ -1,0 +1,12 @@
+#description
+#CImg.operation: make a single operation between 2 images (actually subtraction only)
+
+#compile
+g++ -o CImg.operation CImg.operation.cpp -I../../CImg -Wall -W -lm -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr && ./CImg.operation -h
+
+#documentation
+./DoxIt.sh
+
+#run
+./CImg.operation -i1 image1.png -i1 image2.png -o image1-2.png
+
