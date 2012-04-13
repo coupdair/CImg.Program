@@ -84,7 +84,6 @@
 
 /** \page user user guide
  *
- * \todo add screen capture
  * \todo use section (instead of paragraphs) and add table of contents (such as in mainpage)
  *
  * \par different type of display for image
