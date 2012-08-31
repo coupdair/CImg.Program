@@ -105,7 +105,7 @@ int main(int argc,char **argv) {
   else
   {//crop
   //load source image
-  CImg<unsigned char> image(file_i);
+  CImg<int> image(file_i);
   //crop and save
   image.crop(x,y,x+sx,y+sy).save(file_o);
   }//crop
