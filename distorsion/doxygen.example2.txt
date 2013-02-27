@@ -1,0 +1,12 @@
+//!BothInDeclarationNExplanation
+/** 
+ * InExplanationPartOnly
+ * \param arg1 = ExplanationOnThisFunctionArgument
+ * \param arg2 = ExplanationOnThisFunctionArgument
+ *
+ * \code
+ *   AnExampleOfUse
+ * \endcode
+ *
+ * \see AnOtherFunctionOrAvariable
+**/
