@@ -460,6 +460,10 @@ int main(int argc,char **argv)
   cimg_usage("display image as 2D map or/and 1D graph(s) or 3D surface.");
   // Read image filename from the command line (or set it to "img/parrot_original.ppm" if option '-i' is not provided).
   const char* file_i = cimg_option("-i","image.png","Input image");
+  //2x2D display options
+  const bool display_2x2D =cimg_option("--2x2D",false,"display 2 images");
+  const char* file_i1= cimg_option("-i1","image1.png","Input image 1 (e.g. image1.png)");
+  const char* file_i2= cimg_option("-i2","image2.png","Input image 2 (e.g. image2.png)");
   //pre-processing options
   //// Read pre-blurring variance from the command line (or set it to 1.0 if option '-blur' is not provided).
   const double sigma = cimg_option("--blur",-1.0,"Variance of gaussian pre-blurring (e.g. --blur 2.0)");
@@ -479,27 +483,43 @@ int main(int argc,char **argv)
   const bool help=cimg_option("-h",false,"display this help.");
   //exit on help request '-h' command line option
   if(help) return 0;
-  // Load an image, transform it to a color image (if necessary) and blur it with the standard deviation sigma.
-  CImg<> image(file_i);
-///pre-processing
-  if(normalize) image.normalize(0,255);
-  if(sigma>0.0) image.blur((float)sigma);
   //display
-  if(display_1D)
-///display as image (2D map) and profiles (1D graph)
+  if(display_2x2D)
   {
-    display1D2D(image);
-  }//display_1D
-  else if(display_3D)
-///display as surface (3D)
-  {
-    display3D(image,file_o,ratioz,di,file_pose_i,file_pose_o,rtype,color_type);
-  }//display_3D
+    CImg<> image1(file_i1);
+    CImg<> image2(file_i2);
+    CImgList<> image(2);
+    image[0]=image1.get_shared();
+    image[1]=image2.get_shared();
+    std::string title=file_i1;
+    title+=" ";
+    title+=file_i2;
+    image.display((char*)title.c_str());
+  }//display_2x2D
   else
-///display as 2D map
   {
-    image.display(file_i);
-  }//display_2D
+    // Load an image, transform it to a color image (if necessary) and blur it with the standard deviation sigma.
+    CImg<> image(file_i);
+///pre-processing
+    if(normalize) image.normalize(0,255);
+    if(sigma>0.0) image.blur((float)sigma);
+
+    if(display_1D)
+///display as image (2D map) and profiles (1D graph)
+    {
+      display1D2D(image);
+    }//display_1D
+    else if(display_3D)
+///display as surface (3D)
+    {
+      display3D(image,file_o,ratioz,di,file_pose_i,file_pose_o,rtype,color_type);
+    }//display_3D
+    else
+///display as 2D map
+    {
+      image.display(file_i);
+    }//display_2D
+  }//display image
   return 0;
 }
 

@@ -82,6 +82,8 @@ int main(int argc,char **argv) {
   //----------------
 
   //load an image, transform it to a grey level image (if necessary)
+//CImg<unsigned int> imgI(file_i);
+//CImg<unsigned char> img=imgI/256;
   CImg<unsigned char> img(file_i);
   if(img.spectrum()==3) img.RGBtoHSI().channel(2)*255;
   //get Fourier tranform image

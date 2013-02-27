@@ -78,6 +78,7 @@ int main(int argc,char **argv) {
   const bool help=cimg_option("-h",false,"display this help.");
   //exit on help request '-h' command line option
   if(help) return 0;
+/*
   if(sx==0||sy==0)
   {//4 quadrant
   //load source image
@@ -103,11 +104,17 @@ int main(int argc,char **argv) {
   img.save(tmp.c_str());
   }//4 quadrant
   else
+*/
   {//crop
   //load source image
-  CImg<unsigned char> image(file_i);
+  CImg<unsigned int> image(file_i);
+//image.print("full image");
+std::cout<<"max_full= "<<image.max()<<"\n";
   //crop and save
-  image.crop(x,y,x+sx,y+sy).save(file_o);
+  image.crop(x,y,x+sx,y+sy);
+//  image.print("crop image");
+std::cout<<"max_crop= "<<image.max()<<"\n";
+  image.save(file_o);
   }//crop
   return 0;
 }

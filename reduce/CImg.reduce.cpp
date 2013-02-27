@@ -57,11 +57,14 @@ int main(int argc,char **argv)
   if(help) return 0;
   //Load an image
   const CImg<int> image1(file_i1);
-        CImg<int> profile1(image1.width(),1,1,1,0);//fill 0
+        CImg<float> profile1(image1.width(),1,1,1,0);//fill 0
   const CImg<int> image2(file_i2);
-        CImg<int> profile2(image2.width(),1,1,1,0);//fill 0
+        CImg<float> profile2(image2.width(),1,1,1,0);//fill 0
   const CImg<int> image3(file_i3);
-        CImg<int> profile3(image3.width(),1,1,1,0);//fill 0
+        CImg<float> profile3(image3.width(),1,1,1,0);//fill 0
+//image1.display(file_i1);
+//image2.display(file_i2);
+//image3.display(file_i3);
   //reduce along x direction
   cimg_forXY(image1,x,y)
   {
@@ -78,12 +81,18 @@ int main(int argc,char **argv)
     profile3(x)+=image3(x,y);
   }
   profile3/=image3.height();
+/*
+profile1.print("profile1");
+profile2.print("profile2");
+profile3.print("profile3");
+*/
   //gather on single graph (RGB)
   CImg<int> profile(profile1.width(),1,1,3,0);
   profile.draw_image(0,0,0,0,profile1);//R
   profile.draw_image(0,0,0,1,profile2);//G
   profile.draw_image(0,0,0,2,profile3);//B
   profile.display_graph("RGB");
+//profile.print("profile");
   //save graphs as image
   profile.save(file_o);
   //get maximum positions
