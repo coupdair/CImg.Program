@@ -1,14 +1,21 @@
 collection of programs using CImg library
 
     image displaying
-        CImg.display 
-    image processing
+        CImg.display
+
+    basic image processing
         CImg.crop
         CImg.operation
+        CImg.labeling
+
+    image measurement
+        CImg.object_displacement
+        CImg.warping, CImg.mapping
+
+    statistics
         CImg.reduce
+
+    changing space
         CImg.fourier
         CImg.hough
-        CImg.labeling
-        CImg.object_displacement 
-        CImg.warping, CImg.mapping
 

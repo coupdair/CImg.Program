@@ -1,20 +1,3 @@
-#CImg.Program
-collection of programs using CImg library
-
-    image displaying
-        CImg.display 
-    image processing
-        CImg.crop
-        CImg.operation
-        CImg.reduce
-        CImg.fourier
-        CImg.hough
-        CImg.labeling
-        CImg.object_displacement 
-        CImg.warping, CImg.mapping
-
-exit
-
 #clone
 cd code
 git clone git://github.com/coupdair/CImg.Program.git
@@ -23,15 +6,6 @@ ls CImg.Program/*/_info*.txt
 
 exit
 
-#developper
+#contribute
 git clone git@github.com:coupdair/CImg.Program.git
-
-exit
-
-#initialisation
-for f in */*.cpp */*.h */*.txt */*.png */*.Doxygen */*.sh */doc  */*.xcf */img */*.cimg; do git add $f; done
-git status
-
-#update GitHub
-git push origin master
 
