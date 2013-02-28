@@ -146,6 +146,9 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   ///image files
   const std::string input_file_name= cimg_option("-i","image.TIF","calibration image.");
   const std::string warping_file_name=cimg_option("-o","warping_coefficient.cimg","warping coefficient (i.e. 4 corner points on image).");
+  const int   cross_x_nb=cimg_option("-nx",11,"number of markers along X axis.");
+  const int   cross_y_nb=cimg_option("-ny", 8,"number of markers along Y axis.");
+  const float cross_step=cimg_option("-s",0.005,"step between crosses (meter).");
   const int GUI_delay=cimg_option("-d",2345,"delay to check result on display at the end of the program in ms (e.g. 0 no wait, but result can be seen in \"color.png\" image file).");
   ///stop if help requested
   if(show_help) {/*print_help(std::cerr);*/return 0;}
@@ -203,7 +206,19 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
     //write point to map
     map.draw_image(0,0,0,c,pts);
   }//get ROIs
-//! \todo [high] output average image size for mapping (save it too; but not in the same file)
+//! \todo [high] . output average image size for mapping (save it too; but not in the same file)
+  //size
+  //X lenght
+  {
+  float dx=map(0,0,0)-map(1,0,0);//=tr_x-tl_x
+  float dy=map(0,0,1)-map(1,0,1);//=tr_y-tl_y
+  float dX=std::sqrt(dx*dx+dy*dy);//dX (pixel)
+  float dXr=(cross_x_nb-1)*cross_step;//dX (m)
+std::cout<<"magnification="<<dXr/dX<<" m/pixel\n";
+std::cout<<"magnification="<<dX/dXr<<" pixel/m\n";
+std::cout<<"length along X="<<dX<<" pixel\n";
+std::cout<<"length along X="<<dXr<<" meter\n";
+  }
   //save GUI display
   color_img.save("color.png");
   //reshape: (x,y)=(tl,tr,bl,br), c=(x,y)
