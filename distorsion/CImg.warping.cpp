@@ -124,6 +124,24 @@ display.display(color_image);
   return 0;
 }//get_position_greylevel
 
+//! local magnification
+template<typename Tpts>
+int local_magnification(const std::string &title, const cimg_library::CImg<Tpts> &pt0,const cimg_library::CImg<Tpts> &pt1,const int cross_nb, const float cross_step)
+{
+  const float x0=pt0(0);
+  const float x1=pt1(0);
+  const float y0=pt0(1);
+  const float y1=pt1(1);
+//std::cout<<"0=("<<x0<<","<<y0<<") pixel\n";
+//std::cout<<"1=("<<x1<<","<<y1<<") pixel\n";
+  const float dx=x0-x1;
+  const float dy=y0-y1;
+  const float dX=std::sqrt(dx*dx+dy*dy);//dX (pixel)
+  const float dXr=(cross_nb-1)*cross_step;//dX (m)
+std::cout<<"length along "<<title<<"="<<dX<<" pixel, i.e. "<<dXr<<" meter\n";
+std::cout<<"magnification="<<dXr/dX<<" m/pixel, i.e. "<<dX/dXr<<" pixel/m\n";
+}//local_magnification
+
 int main(int argc, char *argv[])
 { 
 //commmand line options
@@ -209,16 +227,10 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
 //! \todo [high] . output average image size for mapping (save it too; but not in the same file)
   //size
   //X lenght
-  {
-  float dx=map(0,0,0)-map(1,0,0);//=tr_x-tl_x
-  float dy=map(0,0,1)-map(1,0,1);//=tr_y-tl_y
-  float dX=std::sqrt(dx*dx+dy*dy);//dX (pixel)
-  float dXr=(cross_x_nb-1)*cross_step;//dX (m)
-std::cout<<"magnification="<<dXr/dX<<" m/pixel\n";
-std::cout<<"magnification="<<dX/dXr<<" pixel/m\n";
-std::cout<<"length along X="<<dX<<" pixel\n";
-std::cout<<"length along X="<<dXr<<" meter\n";
-  }
+  local_magnification("X top",    map.get_shared_channel(0),map.get_shared_channel(1), cross_x_nb,cross_step);//top    points i.e. magnification along X
+  local_magnification("X bottom", map.get_shared_channel(2),map.get_shared_channel(3), cross_x_nb,cross_step);//bottom points i.e. magnification along X
+  local_magnification("Y left",   map.get_shared_channel(0),map.get_shared_channel(2), cross_y_nb,cross_step);//left   points i.e. magnification along Y
+  local_magnification("Y right",  map.get_shared_channel(1),map.get_shared_channel(3), cross_y_nb,cross_step);//right  points i.e. magnification along Y
   //save GUI display
   color_img.save("color.png");
   //reshape: (x,y)=(tl,tr,bl,br), c=(x,y)
