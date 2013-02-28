@@ -126,7 +126,7 @@ display.display(color_image);
 
 //! local magnification
 template<typename Tpts>
-int local_magnification(const std::string &title, const cimg_library::CImg<Tpts> &pt0,const cimg_library::CImg<Tpts> &pt1,const int cross_nb, const float cross_step)
+int local_magnification(const std::string &title, const cimg_library::CImg<Tpts> &pt0,const cimg_library::CImg<Tpts> &pt1,const int cross_nb, const float cross_step, float &magnification,float &length)
 {
   const float x0=pt0(0);
   const float x1=pt1(0);
@@ -140,6 +140,8 @@ int local_magnification(const std::string &title, const cimg_library::CImg<Tpts>
   const float dXr=(cross_nb-1)*cross_step;//dX (m)
 std::cout<<"length along "<<title<<"="<<dX<<" pixel, i.e. "<<dXr<<" meter\n";
 std::cout<<"magnification="<<dXr/dX<<" m/pixel, i.e. "<<dX/dXr<<" pixel/m\n";
+  length=dX;
+  magnification=dXr/dX;
 }//local_magnification
 
 int main(int argc, char *argv[])
@@ -162,8 +164,11 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   bool show_info=cimg_option("-I",false,NULL);//-I hidden option
   if( cimg_option("--info",show_info,"show compilation options (or -I option)") ) {show_info=true;cimg_library::cimg::info();}//same --info or -I option
   ///image files
-  const std::string input_file_name= cimg_option("-i","image.TIF","calibration image.");
-  const std::string warping_file_name=cimg_option("-o","warping_coefficient.cimg","warping coefficient (i.e. 4 corner points on image).");
+  const std::string input_file_name= cimg_option("-i","image.TIF","calibration image [input].");
+  const std::string warping_file_name=cimg_option("-o","warping_coefficient.cimg","warping coefficient (i.e. 4 corner points on image) [output].");
+  const std::string  size_file_name=cimg_option("-os","image_size.cimg","image size in pixel [output for mapping].");
+  const std::string gridx_file_name=cimg_option("-gx","grid_x.cimg","grid of X axis in meter [output].");
+  const std::string gridy_file_name=cimg_option("-gy","grid_y.cimg","grid of X axis in meter [output].");
   const int   cross_x_nb=cimg_option("-nx",11,"number of markers along X axis.");
   const int   cross_y_nb=cimg_option("-ny", 8,"number of markers along Y axis.");
   const float cross_step=cimg_option("-s",0.005,"step between crosses (meter).");
@@ -225,20 +230,37 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
     map.draw_image(0,0,0,c,pts);
   }//get ROIs
 //! \todo [high] . output average image size for mapping (save it too; but not in the same file)
-  //size
-  //X lenght
-  local_magnification("X top",    map.get_shared_channel(0),map.get_shared_channel(1), cross_x_nb,cross_step);//top    points i.e. magnification along X
-  local_magnification("X bottom", map.get_shared_channel(2),map.get_shared_channel(3), cross_x_nb,cross_step);//bottom points i.e. magnification along X
-  local_magnification("Y left",   map.get_shared_channel(0),map.get_shared_channel(2), cross_y_nb,cross_step);//left   points i.e. magnification along Y
-  local_magnification("Y right",  map.get_shared_channel(1),map.get_shared_channel(3), cross_y_nb,cross_step);//right  points i.e. magnification along Y
+  //average size i.e. X and Y average length and pixel size
+  cimg_library::CImg<float> size(2,1,1,2);//image size and pixel size along X and Y axes.
+  {
+  float magn,len;
+  local_magnification("X top",    map.get_shared_channel(0),map.get_shared_channel(1), cross_x_nb,cross_step, magn,len);//top    points i.e. magnification along X
+  size(0,0)=magn; size(0,1)=len;
+  local_magnification("X bottom", map.get_shared_channel(2),map.get_shared_channel(3), cross_x_nb,cross_step, magn,len);//bottom points i.e. magnification along X
+  size(0,0)+=magn;size(0,1)+=len;
+  local_magnification("Y left",   map.get_shared_channel(0),map.get_shared_channel(2), cross_y_nb,cross_step, magn,len);//left   points i.e. magnification along Y
+  size(1,0)=magn; size(1,1)=len;
+  local_magnification("Y right",  map.get_shared_channel(1),map.get_shared_channel(3), cross_y_nb,cross_step, magn,len);//right  points i.e. magnification along Y
+  size(1,0)+=magn;size(1,1)+=len;
+  size/=2;//average
+  }//average size
   //save GUI display
   color_img.save("color.png");
-  //reshape: (x,y)=(tl,tr,bl,br), c=(x,y)
+  //reshape map: (x,y)=(tl,tr,bl,br), c=(x,y)
   map.permute_axes("zcyx");
   map.assign(2,2,1,2);
-  //save
+  //save warping
 map.print("map");
   map.save(warping_file_name.c_str());
+  //save size
+  size.save(size_file_name.c_str());
+  //save grid
+  {
+  cimg_library::CImgList<float> grid(2);
+  cimglist_for(grid,l) {grid[l].assign(size(l,1)); cimg_forX(grid[l],x) grid[l](x)=x*size(l,0);}
+  grid[0].save(gridx_file_name.c_str());
+  grid[1].save(gridy_file_name.c_str());
+  }//save grid
 cimg_library::cimg::sleep(GUI_delay);
   return 0;
 }//main
