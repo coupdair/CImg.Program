@@ -9,3 +9,7 @@ exit
 #contribute
 git clone git@github.com:coupdair/CImg.Program.git
 
+#CImg version
+cd CImg.Program
+grep "define cimg_version" ../CImg/CImg.h > VERSION_CIMG
+

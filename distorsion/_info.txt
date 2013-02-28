@@ -1,9 +1,38 @@
-GUI
-CImg.warping -i camera1.TIF -o camera1_map.cimg
-CImg.warping -i camera2.TIF -o camera2_map.cimg
+#GUI
+CImg.warping -i camera1.TIF -ob camera1_ -nx 11 -ny 8 -s 0.005
+CImg.warping -i camera2.TIF -ob camera2_ -nx 11 -ny 8 -s 0.005 -d 0
+CImg.warping -i camera3.TIF -ob camera3_ -nx 11 -ny 8 -s 0.005 -d 0
 
-CImg.mapping -i camera1.TIF -m camera1_map.cimg -o camera1_mapped.PNG
-CImg.mapping -i camera2.TIF -m camera2_map.cimg -o camera2_mapped.PNG
+CImg.mapping -i camera1.TIF -m camera1_warping_points.cimg -is camera1_image_size.cimg -o camera1_mapped.PNG
+CImg.mapping -i camera2.TIF -m camera2_warping_points.cimg -is camera1_image_size.cimg -o camera2_mapped.PNG
+CImg.mapping -i camera3.TIF -m camera3_warping_points.cimg -is camera1_image_size.cimg -o camera3_mapped.PNG
 
 animate -delay 50 camera?_mapped.PNG
+
+exit
+
+#gathering in NetCDF
+##gathering images
+CImg.convert -i camera1_mapped.PNG -o camera1_mapped.nc
+CImg.convert -i camera2_mapped.PNG -o camera2_mapped.nc
+CImg.convert -i camera3_mapped.PNG -o camera3_mapped.nc
+ncecat -O camera1_mapped.nc camera2_mapped.nc camera3_mapped.nc camera1n2n3_mapped.nc
+ncwa -O -a dimc,dimz camera1n2n3_mapped.nc camera1n2n3_mapped.nc
+ncrename -v varCImg,intensity -d record,camera camera1n2n3_mapped.nc
+
+##gathering grids
+CImg.convert.v0.2.7.float2float -i camera1_grid_x.cimg -o camera1_grid_x.nc
+ncwa -O -a dimSample,dimc,dimz,dimy camera1_grid_x.nc camera1_grid_x.nc
+ncrename -v varCImg,dimx camera1_grid_x.nc
+CImg.convert.v0.2.7.float2float -i camera1_grid_y.cimg -o camera1_grid_y.nc
+ncwa -O -a dimSample,dimc,dimz,dimy camera1_grid_y.nc camera1_grid_y.nc
+ncrename -v varCImg,dimy -d dimx,dimy camera1_grid_y.nc
+
+##gathering all
+ncks -A camera1_grid_x.nc camera1n2n3_mapped.nc
+ncks -A camera1_grid_y.nc camera1n2n3_mapped.nc
+
+ncdump -h camera1n2n3_mapped.nc
+
+ncview camera1n2n3_mapped.nc
 

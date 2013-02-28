@@ -108,7 +108,6 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   int width= cimg_option("-W",321,"mapped image width.");
   int height=cimg_option("-H",123,"mapped image height.");
   const std::string size_file_name=cimg_option("-is","","image size in pixel [input from warping] (e.g. \"-is image_size.cimg\"; -W and -H ignored).");
-//! \todo [high] . add average image size for mapped image
 //! \todo [medium] add REAL pixel size and square for mapped image
   ///stop if help requested
   if(show_help) {/*print_help(std::cerr);*/return 0;}
