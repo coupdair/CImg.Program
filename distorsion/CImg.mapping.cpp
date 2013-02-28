@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
 it uses different GNU libraries (see --info option)\n\n \
 usage: ./CImg.mapping -h -I #help and compilation information\n \
        ./CImg.mapping -i image.TIF -m warping.cimg -o mapped.png\n \
+       ./CImg.mapping -i image.TIF -m warping.cimg -is image_size.cimg -o mapped.png\n \
 version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingFormat."+std::string(WARPING_FORMAT_VERSION)+")\n compilation date: " \
             ).c_str());//cimg_usage
   ///information and help
@@ -104,9 +105,10 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   const std::string warping_file_name=cimg_option("-m","warping_coefficient.cimg","warping coefficient (i.e. 4 corner points on source image).");
   const std::string output_file_name=cimg_option("-o","mapped_image.PNG","mapped image (i.e. destination).");
   ////mapped image size: w,h
-  const int width= cimg_option("-W",321,"mapped image width.");
-  const int height=cimg_option("-H",123,"mapped image height.");
-//! \todo [high]   add average image size for mapped image
+  int width= cimg_option("-W",321,"mapped image width.");
+  int height=cimg_option("-H",123,"mapped image height.");
+  const std::string size_file_name=cimg_option("-is","","image size in pixel [input from warping] (e.g. \"-is image_size.cimg\"; -W and -H ignored).");
+//! \todo [high] . add average image size for mapped image
 //! \todo [medium] add REAL pixel size and square for mapped image
   ///stop if help requested
   if(show_help) {/*print_help(std::cerr);*/return 0;}
@@ -114,16 +116,33 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   //source image
   const cimg_library::CImg<int> src_img(input_file_name.c_str());
   //warping grid
-  cimg_library::CImg<float> map(warping_file_name.c_str());
-  //mapped image
-  cimg_library::CImg<int> map_img(width,height);
-
+  cimg_library::CImg<float> map(warping_file_name.c_str());//(2,2,1,2)
 map.print("map");
-  ///check sizes i.e. 4 corner points: topleft, topright, bottomleft, bottomright in 2D connectivity
+  ///check dimensions, i.e. 4 corner points: topleft, topright, bottomleft, bottomright in 2D connectivity
   if(map.width()!=2)    return -1;//x connectivity
   if(map.height()!=2)   return -2;//y connectivity
-  if(map.spectrum()!=2) return -4;//(x,y) coordinates
-  ///expand
+  if(map.depth()!=1)    return -3;
+  if(map.spectrum()!=2) return -4;//(x,y) coordinates, i.e. x and y components
+
+  //mapped image
+  cimg_library::CImg<int> map_img;
+  if(size_file_name=="")//user size
+    map_img.assign(width,height);
+  else
+  {//warping size (i.e. sizes from warping program)
+    cimg_library::CImg<float> size(size_file_name.c_str());//(2,1,1,2);
+    //check dimensions
+    if(size.width()!=2)    return -11;//(x,y)
+    if(size.height()!=1)   return -22;
+    if(size.depth()!=1)    return -33;
+    if(size.spectrum()!=2) return -44;//(pixel_size,image_size)
+    //get image size
+    width= size(0,1);//image size along x
+    height=size(1,1);//image size along y
+    map_img.assign(width,height);
+  }//warping size
+
+  //warping grid expansion
   map.resize(width,height,-100,-100,3/*bilinear*/);
 map.print("map grid");
 
@@ -133,6 +152,7 @@ map.print("map grid");
 //    map_img(x,y)=src_img.linear_atXY(map(x,y,0,0),map(x,y,0,1)); //bilinear
 
   ///save
+std::cerr<<"information: saving \""<<output_file_name.c_str()<<"\".\n"<<std::flush;
   map_img.save(output_file_name.c_str());
   return 0;
 }//main

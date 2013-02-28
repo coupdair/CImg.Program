@@ -155,7 +155,9 @@ GUI usage: 1. use black marker over white background image.\n \
               (e.g. firstly top/left, secondly top/right, thridly bottom/left and finally bottom/right).\n \
         note: selection of a black marker done using left button of mouse (i.e. click on black area any where on marker)\n\n \
 usage: ./CImg.warping -h -I #help and compilation information\n \
-       ./CImg.warping -i image.TIF -o warping.cimg\n \
+       ./CImg.warping -i image.TIF -o warping.cimg -d 0\n \
+       ./CImg.warping -i image.TIF -o warping.cimg -nx 9 -ny 9 -s 0.123\n \
+       ./CImg.warping -i camera2_calib.TIF -ob camera2_ -nx 21 -ny 12 -s 0.321\n \
 version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std::string(WARPING_FORMAT_VERSION)+")\n compilation date: " \
             ).c_str());//cimg_usage
   ///information and help
@@ -165,16 +167,26 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   if( cimg_option("--info",show_info,"show compilation options (or -I option)") ) {show_info=true;cimg_library::cimg::info();}//same --info or -I option
   ///image files
   const std::string input_file_name= cimg_option("-i","image.TIF","calibration image [input].");
-  const std::string warping_file_name=cimg_option("-o","warping_coefficient.cimg","warping coefficient (i.e. 4 corner points on image) [output].");
-  const std::string  size_file_name=cimg_option("-os","image_size.cimg","image size in pixel [output for mapping].");
-  const std::string gridx_file_name=cimg_option("-gx","grid_x.cimg","grid of X axis in meter [output].");
-  const std::string gridy_file_name=cimg_option("-gy","grid_y.cimg","grid of X axis in meter [output].");
+  std::string warping_file_name=cimg_option("-o","warping_points.cimg","warping coefficient (i.e. 4 corner points on image) [output].");
+  const std::string  base_file_name=cimg_option("-ob","","output basename (e.g. \"-ob camera2_\" will output \"-os camera2_image_size.cimg\" and so on for -gx, -gy and -o options).");
+  std::string  size_file_name=cimg_option("-os","image_size.cimg","image size in pixel [output for mapping].");
+  std::string gridx_file_name=cimg_option("-gx","grid_x.cimg","grid of X axis in meter [output].");
+  std::string gridy_file_name=cimg_option("-gy","grid_y.cimg","grid of Y axis in meter [output].");
   const int   cross_x_nb=cimg_option("-nx",11,"number of markers along X axis.");
   const int   cross_y_nb=cimg_option("-ny", 8,"number of markers along Y axis.");
   const float cross_step=cimg_option("-s",0.005,"step between crosses (meter).");
   const int GUI_delay=cimg_option("-d",2345,"delay to check result on display at the end of the program in ms (e.g. 0 no wait, but result can be seen in \"color.png\" image file).");
   ///stop if help requested
   if(show_help) {/*print_help(std::cerr);*/return 0;}
+  //basename
+  if(base_file_name!="")
+  {
+    std::cerr<<"information: using basename (i.e. -ob option as prefix) for all output files.\n";
+    warping_file_name=base_file_name+warping_file_name;
+    size_file_name=base_file_name+size_file_name;
+    gridx_file_name=base_file_name+gridx_file_name;
+    gridy_file_name=base_file_name+gridy_file_name;
+  }//basename
 
   //calibration image
   cimg_library::CImg<int> img(input_file_name.c_str());
@@ -204,7 +216,6 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
     hand_map.draw_image(0,0,0,c,pts);
   }//get points
   //detect center
-//! \todo v get finer marker center
   ///threshold (using last clicked point)
   int min=img(pts(0),pts(1));
   int max=img.max();
@@ -229,7 +240,6 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
     //write point to map
     map.draw_image(0,0,0,c,pts);
   }//get ROIs
-//! \todo [high] . output average image size for mapping (save it too; but not in the same file)
   //average size i.e. X and Y average length and pixel size
   cimg_library::CImg<float> size(2,1,1,2);//image size and pixel size along X and Y axes.
   {
@@ -245,19 +255,23 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   size/=2;//average
   }//average size
   //save GUI display
+std::cerr<<"information: saving \"color.png\"\r"<<std::flush;
   color_img.save("color.png");
   //reshape map: (x,y)=(tl,tr,bl,br), c=(x,y)
   map.permute_axes("zcyx");
   map.assign(2,2,1,2);
   //save warping
 map.print("map");
+std::cerr<<"information: saving \""<<warping_file_name.c_str()<<"\"\r"<<std::flush;
   map.save(warping_file_name.c_str());
   //save size
+std::cerr<<"information: saving \""<<size_file_name.c_str()<<"\"\r"<<std::flush;
   size.save(size_file_name.c_str());
   //save grid
   {
   cimg_library::CImgList<float> grid(2);
   cimglist_for(grid,l) {grid[l].assign(size(l,1)); cimg_forX(grid[l],x) grid[l](x)=x*size(l,0);}
+std::cerr<<"information: saving \""<<gridx_file_name.c_str()<<"\" and \""<<gridy_file_name.c_str()<<"\".\n"<<std::flush;
   grid[0].save(gridx_file_name.c_str());
   grid[1].save(gridy_file_name.c_str());
   }//save grid
