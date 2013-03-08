@@ -190,6 +190,7 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
     gridx_file_name=base_file_name+gridx_file_name;
     gridy_file_name=base_file_name+gridy_file_name;
     gridz_file_name=base_file_name+gridz_file_name;
+    color_file_name=base_file_name+color_file_name;
   }//basename
 
   //calibration image
@@ -269,8 +270,11 @@ cimg_forZ(map,z)
   //save GUI display
   {
   char fileName[1024];
-  cimg_library::cimg::number_filename(color_file_name.c_str(),z,2,fileName);
-  std::cerr<<"information: saving \""<<fileName<<"\"\r"<<std::flush;
+  if(cross_z_nb>1)
+    cimg_library::cimg::number_filename(color_file_name.c_str(),z,2,fileName);
+  else
+    strcpy(fileName,color_file_name.c_str());
+  std::cerr<<"information: saving \""<<fileName<<"\"\n"<<std::flush;
   color_img.save(fileName);
   }
 }//plane loop
