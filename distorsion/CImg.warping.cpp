@@ -209,9 +209,12 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   disp.display(color_img);
 
   //warping points
+  cimg_library::CImg<float>      map(2,1,cross_z_nb,4);//4 coner points of source image(s): x=(x,y),z=plane,c=(tl,tr,bl,br) by image processing
+//! \todo plane loop
+{
   cimg_library::CImg<float> pts(2);
-  cimg_library::CImg<float> hand_map(2,1,1,4);//4 coner points of source image: x=(x,y),c=(tl,tr,bl,br) by hand
-  cimg_library::CImg<float>      map(2,1,1,4);//4 coner points of source image: x=(x,y),c=(tl,tr,bl,br) by image processing
+  cimg_library::CImg<float> hand_map(2,1,1,4);//4 coner points of source image(s): x=(x,y),c=(tl,tr,bl,br) by hand
+
   cimg_forC(hand_map,c)
   {
     get_point(color_img,pts,disp);//or get_channel(c)
@@ -243,6 +246,8 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
     //write point to map
     map.draw_image(0,0,0,c,pts);
   }//get ROIs
+}
+
   //average size i.e. X and Y average length and pixel size
   cimg_library::CImg<float> size(2,1,1,2);//image size and pixel size along X and Y axes.
   {
