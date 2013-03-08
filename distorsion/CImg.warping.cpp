@@ -166,14 +166,16 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   bool show_info=cimg_option("-I",false,NULL);//-I hidden option
   if( cimg_option("--info",show_info,"show compilation options (or -I option)") ) {show_info=true;cimg_library::cimg::info();}//same --info or -I option
   ///image files
-  const std::string input_file_name= cimg_option("-i","image.TIF","calibration image [input].");
-  std::string warping_file_name=cimg_option("-o","warping_points.cimg","warping coefficient (i.e. 4 corner points on image) [output].");
-  const std::string  base_file_name=cimg_option("-ob","","output basename (e.g. \"-ob camera2_\" will output \"-os camera2_image_size.cimg\" and so on for -gx, -gy and -o options).");
+  const std::string input_file_name= cimg_option("-i","image.TIF","calibration image [input] (e.g. -i stdin for multiple images i.e. planes for 3D warping).");
+  std::string warping_file_name=cimg_option("-o","warping_points.cimg","warping coefficient (i.e. 4 corner points on image -on each plane of 3D warping-) [output].");
+  const std::string  base_file_name=cimg_option("-ob","","output basename (e.g. \"-ob camera2_\" will output \"-os camera2_image_size.cimg\" and so on for -gx, -gy(, -gz) and -o options).");
   std::string  size_file_name=cimg_option("-os","image_size.cimg","image size in pixel [output for mapping].");
   std::string gridx_file_name=cimg_option("-gx","grid_x.cimg","grid of X axis in meter [output].");
   std::string gridy_file_name=cimg_option("-gy","grid_y.cimg","grid of Y axis in meter [output].");
+  std::string gridz_file_name=cimg_option("-gz","grid_z.cimg","grid of Z axis in meter [output].");
   const int   cross_x_nb=cimg_option("-nx",11,"number of markers along X axis.");
   const int   cross_y_nb=cimg_option("-ny", 8,"number of markers along Y axis.");
+  const int   cross_z_nb=cimg_option("-nz", 1,"number of markers along Z axis for 3D warping (i.e. number of planes -i.e. images-).");
   const float cross_step=cimg_option("-s",0.005,"step between crosses (meter).");
   const int GUI_delay=cimg_option("-d",2345,"delay to check result on display at the end of the program in ms (e.g. 0 no wait, but result can be seen in \"color.png\" image file).");
   ///stop if help requested
@@ -186,17 +188,18 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
     size_file_name=base_file_name+size_file_name;
     gridx_file_name=base_file_name+gridx_file_name;
     gridy_file_name=base_file_name+gridy_file_name;
+    gridz_file_name=base_file_name+gridz_file_name;
   }//basename
 
   //calibration image
-  cimg_library::CImg<int> img(input_file_name.c_str());
+  cimg_library::CImgList<int> img(input_file_name.c_str());
   ///force grey level image
-  img.channel(0);
+  cimglist_for(img,i) img[i].channel(0);
 //img.display("img");
   //color image (for selection and point drawing)
-  cimg_library::CImg<unsigned char> color_img(img.width(),img.height(),1,3);
+  cimg_library::CImg<unsigned char> color_img(img[0].width(),img[0].height(),1,3);
   {
-  cimg_library::CImg<unsigned char> image=img.get_normalize(0,255);
+  cimg_library::CImg<unsigned char> image=img[0].get_normalize(0,255);
 //image.print("image");
   cimg_forC(color_img,c) color_img.draw_image(0,0,0,c,image);
   color_img.print("color");
@@ -217,9 +220,9 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   }//get points
   //detect center
   ///threshold (using last clicked point)
-  int min=img(pts(0),pts(1));
-  int max=img.max();
-  cimg_library::CImg<int> bin_img=img.get_threshold((max-min)/2);
+  int min=img[0](pts(0),pts(1));
+  int max=img[0].max();
+  cimg_library::CImg<int> bin_img=img[0].get_threshold((max-min)/2);
 //bin_img.display("binary");
   ///ROI around marker
   cimg_library::CImg<int> roi(2,2,1,4);//4 coner window corresponding to marker in source image: x,y=(x,y),c=(tl,tr,bl,br)
@@ -236,7 +239,7 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
     //binary gravity center
     get_position_binary(bin_img,rectangle,pts,color_img,disp);
     //grey level gravity center
-    get_position_greylevel(img, rectangle,pts,color_img,disp);
+    get_position_greylevel(img[0], rectangle,pts,color_img,disp);
     //write point to map
     map.draw_image(0,0,0,c,pts);
   }//get ROIs
