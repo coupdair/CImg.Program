@@ -1,0 +1,9 @@
+warping
+_ warping: detection of cross number
+
+
+3D warping
+_ warping: 2D to 3D warping, i.e. single plane to multiple (e.g. 3 planes)
+_ mapping: 2D mapping in 3D space 1. at z, 2. in a plane through 3 points
+_ warping: detection of crosses on other planes
+
