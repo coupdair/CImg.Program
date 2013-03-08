@@ -192,26 +192,32 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   }//basename
 
   //calibration image
-  cimg_library::CImgList<int> img(input_file_name.c_str());
+  cimg_library::CImgList<int> img(cross_z_nb);
+//! \todo load from -i stdin
+cimglist_for(img,z) img[z].load(input_file_name.c_str());
   ///force grey level image
-  cimglist_for(img,i) img[i].channel(0);
+  cimglist_for(img,z) img[z].channel(0);
 //img.display("img");
   //color image (for selection and point drawing)
   cimg_library::CImg<unsigned char> color_img(img[0].width(),img[0].height(),1,3);
+  //color display (GUI)
+  cimg_library::CImgDisplay disp;
+
+  //warping points
+  cimg_library::CImg<float>      map(2,1,cross_z_nb,4);//4 coner points of source image(s): x=(x,y),z=plane,c=(tl,tr,bl,br) by image processing
+//! \todo . plane loop
+cimg_forZ(map,z)
+{
+  //draw and display color image (for selection and point drawing)
   {
-  cimg_library::CImg<unsigned char> image=img[0].get_normalize(0,255);
+  cimg_library::CImg<unsigned char> image=img[z].get_normalize(0,255);
 //image.print("image");
   cimg_forC(color_img,c) color_img.draw_image(0,0,0,c,image);
   color_img.print("color");
   }
-  //color display (GUI)
-  cimg_library::CImgDisplay disp;
   disp.display(color_img);
 
-  //warping points
-  cimg_library::CImg<float>      map(2,1,cross_z_nb,4);//4 coner points of source image(s): x=(x,y),z=plane,c=(tl,tr,bl,br) by image processing
-//! \todo plane loop
-{
+  //get 4 coner points
   cimg_library::CImg<float> pts(2);
   cimg_library::CImg<float> hand_map(2,1,1,4);//4 coner points of source image(s): x=(x,y),c=(tl,tr,bl,br) by hand
 
@@ -223,9 +229,9 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   }//get points
   //detect center
   ///threshold (using last clicked point)
-  int min=img[0](pts(0),pts(1));
-  int max=img[0].max();
-  cimg_library::CImg<int> bin_img=img[0].get_threshold((max-min)/2);
+  int min=img[z](pts(0),pts(1));
+  int max=img[z].max();
+  cimg_library::CImg<int> bin_img=img[z].get_threshold((max-min)/2);
 //bin_img.display("binary");
   ///ROI around marker
   cimg_library::CImg<int> roi(2,2,1,4);//4 coner window corresponding to marker in source image: x,y=(x,y),c=(tl,tr,bl,br)
@@ -242,13 +248,14 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
     //binary gravity center
     get_position_binary(bin_img,rectangle,pts,color_img,disp);
     //grey level gravity center
-    get_position_greylevel(img[0], rectangle,pts,color_img,disp);
+    get_position_greylevel(img[z], rectangle,pts,color_img,disp);
     //write point to map
-    map.draw_image(0,0,0,c,pts);
+    map.draw_image(0,0,z,c,pts);
   }//get ROIs
-}
+}//plane loop
 
   //average size i.e. X and Y average length and pixel size
+//! \todo size along z axis
   cimg_library::CImg<float> size(2,1,1,2);//image size and pixel size along X and Y axes.
   {
   float magn,len;
@@ -265,11 +272,20 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   //save GUI display
 std::cerr<<"information: saving \"color.png\"\r"<<std::flush;
   color_img.save("color.png");
-  //reshape map: (x,y)=(tl,tr,bl,br), c=(x,y)
-  map.permute_axes("zcyx");
-  map.assign(2,2,1,2);
+//! \todo . reshape map
+  //reshape map: (x,y,z)=(tl,tr,bl,br), c=(x,y,z)
+map.print("map xy");//x=(x,y),1,z=plane,c=(tl,tr,bl,br)
+  map.permute_axes("cyzx");//xyzc 2 cyzx
+  map.assign(2,2,cross_z_nb,2);//(x,y,z)=(tl,tr,bl,br), c=(x,y)
+map.print("map 2D (x,y)");
+  if(cross_z_nb>1)
+  {//add z in c=(x,y,z)
+    cimg_library::CImg<float> z_map(map.width(),map.height(),map.depth(),1);
+    cimg_forZ(z_map,z) (z_map.get_shared_plane(z)).fill(z);
+    map.append(z_map,'c');
+map.print("map 3D (x,y,z)");
+  }//3D warping
   //save warping
-map.print("map");
 std::cerr<<"information: saving \""<<warping_file_name.c_str()<<"\"\r"<<std::flush;
   map.save(warping_file_name.c_str());
   //save size
