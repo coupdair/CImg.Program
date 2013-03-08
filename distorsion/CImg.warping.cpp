@@ -170,6 +170,7 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   std::string warping_file_name=cimg_option("-o","warping_points.cimg","warping coefficient (i.e. 4 corner points on image -on each plane of 3D warping-) [output].");
   const std::string  base_file_name=cimg_option("-ob","","output basename (e.g. \"-ob camera2_\" will output \"-os camera2_image_size.cimg\" and so on for -gx, -gy(, -gz) and -o options).");
   std::string  size_file_name=cimg_option("-os","image_size.cimg","image size in pixel [output for mapping].");
+  std::string color_file_name=cimg_option("-oc","color.png","color image of selection [output for information].");
   std::string gridx_file_name=cimg_option("-gx","grid_x.cimg","grid of X axis in meter [output].");
   std::string gridy_file_name=cimg_option("-gy","grid_y.cimg","grid of Y axis in meter [output].");
   std::string gridz_file_name=cimg_option("-gz","grid_z.cimg","grid of Z axis in meter [output].");
@@ -193,8 +194,21 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
 
   //calibration image
   cimg_library::CImgList<int> img(cross_z_nb);
-//! \todo load from -i stdin
-cimglist_for(img,z) img[z].load(input_file_name.c_str());
+//! \todo . load from -i stdin
+  {///load image(s)
+  if(input_file_name=="stdin")
+  {//load multiple images from stdin
+    int i=0;
+    char fileName[1024];
+    //while(fscanf(stdin,"%s",fileName)!=EOF)
+    cimglist_for(img,z)
+    {
+      if(fscanf(stdin,"%s",fileName)==EOF) return -99;
+      img[z].load(fileName);
+    }
+  }//load single image from -i option
+  else img[0].load(input_file_name.c_str());
+  }//load image(s)
   ///force grey level image
   cimglist_for(img,z) img[z].channel(0);
 //img.display("img");
@@ -252,6 +266,13 @@ cimg_forZ(map,z)
     //write point to map
     map.draw_image(0,0,z,c,pts);
   }//get ROIs
+  //save GUI display
+  {
+  char fileName[1024];
+  cimg_library::cimg::number_filename(color_file_name.c_str(),z,2,fileName);
+  std::cerr<<"information: saving \""<<fileName<<"\"\r"<<std::flush;
+  color_img.save(fileName);
+  }
 }//plane loop
 
   //average size i.e. X and Y average length and pixel size
@@ -269,10 +290,6 @@ cimg_forZ(map,z)
   size(1,0)+=magn;size(1,1)+=len;
   size/=2;//average
   }//average size
-  //save GUI display
-std::cerr<<"information: saving \"color.png\"\r"<<std::flush;
-  color_img.save("color.png");
-//! \todo . reshape map
   //reshape map: (x,y,z)=(tl,tr,bl,br), c=(x,y,z)
 map.print("map xy");//x=(x,y),1,z=plane,c=(tl,tr,bl,br)
   map.permute_axes("cyzx");//xyzc 2 cyzx
@@ -280,6 +297,7 @@ map.print("map xy");//x=(x,y),1,z=plane,c=(tl,tr,bl,br)
 map.print("map 2D (x,y)");
   if(cross_z_nb>1)
   {//add z in c=(x,y,z)
+//! \todo . reshape map test
     cimg_library::CImg<float> z_map(map.width(),map.height(),map.depth(),1);
     cimg_forZ(z_map,z) (z_map.get_shared_plane(z)).fill(z);
     map.append(z_map,'c');

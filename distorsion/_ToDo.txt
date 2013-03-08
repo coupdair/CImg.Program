@@ -5,6 +5,7 @@ _ warping: detection of cross number
 3D warping
 _ warping: 2D to 3D warping, i.e. single plane to multiple (e.g. 3 planes)
   v -nz
+  v -oc
   . -o
   _ -os
   _ -i stdin
