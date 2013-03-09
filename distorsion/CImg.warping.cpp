@@ -279,10 +279,11 @@ cimg_forZ(map,z)
     int x1=map(0,0,z,c);//x
     int y1=map(1,0,z,c);//y
 std::cerr<<"line=("<<x0<<","<<y0<<", "<<x1<<","<<y1<<")";
-//draw detected line
-const unsigned char color[3]={0,0,255};
-color_img.draw_line(x0,y0,x1,y1,color);
-disp.display(color_img);
+    //draw detected line
+    const unsigned char color[3]={0,0,255};
+//    color_img.draw_line(x0,y0,x1,y1,color);
+    disp.display(color_img);
+    //extract line
     int size=std::sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
     cimg_library::CImg<int> line(size);
     float x=x0,y=y0;
@@ -291,9 +292,15 @@ disp.display(color_img);
     line.threshold((line.max()+line.min())/2);
     int d=0;
     cimg_for_insideX(line,i,1) {const int di=line(i-1)-line(i); if(di==0) continue; ++d;}
-    cross_x_nb=d/2;
+    cross_x_nb=d/2+1;
 std::cerr<<"cross x number="<<cross_x_nb<<"\n";
-//draw extracted line
+    //draw extracted cross positions
+    x=x0;y=y0;
+    dx=(x1-x0)/(float)(cross_x_nb-1);
+    dy=(y1-y0)/(float)(cross_x_nb-1);
+    for(int i=0;i<cross_x_nb;++i,x+=dx,y+=dy) color_img.draw_point(x,y,color);
+    disp.display(color_img);
+//display extracted line
 line.display_graph("line");
   }//detect number of crosses
   //draw other cross positions (not detected, but interpolated)
