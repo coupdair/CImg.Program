@@ -103,6 +103,7 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   ///image files
   const std::string input_file_name= cimg_option("-i","image.TIF","image to map (i.e. source).");
   const std::string warping_file_name=cimg_option("-m","warping_coefficient.cimg","warping coefficient (i.e. 4 corner points on source image).");
+  const float z0=cimg_option("-z",0,"z position of mapping plane in the 3D warped volume (e.g. -z 1.23 ).");
   const std::string output_file_name=cimg_option("-o","mapped_image.PNG","mapped image (i.e. destination).");
   ////mapped image size: w,h
   int width= cimg_option("-W",321,"mapped image width.");
@@ -115,13 +116,13 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   //source image
   const cimg_library::CImg<int> src_img(input_file_name.c_str());
   //warping grid
-  cimg_library::CImg<float> map(warping_file_name.c_str());//(2,2,1,2)
+  cimg_library::CImg<float> map(warping_file_name.c_str());//(2,2,>0,>2)
 map.print("map");
   ///check dimensions, i.e. 4 corner points: topleft, topright, bottomleft, bottomright in 2D connectivity
-  if(map.width()!=2)    return -1;//x connectivity
-  if(map.height()!=2)   return -2;//y connectivity
-  if(map.depth()!=1)    return -3;
-  if(map.spectrum()!=2) return -4;//(x,y) coordinates, i.e. x and y components
+  if(map.width()!=2)   return -1;//x connectivity
+  if(map.height()!=2)  return -2;//y connectivity
+  if(map.depth()<1)    return -3;//z connectivity =1 for 2D warping and >1 for 3D warping
+  if(map.spectrum()<2) return -4;//(x,y(,z)) coordinates, i.e. x and y components for 2D warping or x, y and z for 3D warping
 
   //mapped image
   cimg_library::CImg<int> map_img;
@@ -130,6 +131,7 @@ map.print("map");
   else
   {//warping size (i.e. sizes from warping program)
     cimg_library::CImg<float> size(size_file_name.c_str());//(2,1,1,2);
+size.print("size");
     //check dimensions
     if(size.width()!=2)    return -11;//(x,y)
     if(size.height()!=1)   return -22;
@@ -147,7 +149,7 @@ map.print("map grid");
 
   //image mapping
   cimg_forXY(map_img,x,y)
-    map_img(x,y)=src_img(map(x,y,0,0),map(x,y,0,1)); //closest
+    map_img(x,y)=src_img(map(x,y,z0,0),map(x,y,z0,1)); //closest
 //    map_img(x,y)=src_img.linear_atXY(map(x,y,0,0),map(x,y,0,1)); //bilinear
 
   ///save

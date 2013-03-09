@@ -8,8 +8,9 @@ _ warping: 2D to 3D warping, i.e. single plane to multiple (e.g. 3 planes)
   v -oc
   v -i stdin
   . -o
-  _ -os
+  _ -os (?one size/grid per plane: z axis)
   _ -gz
 _ mapping: 2D mapping in 3D space 1. at z, 2. in a plane through 3 points
 _ warping: detection of crosses on other planes
+_ warp/mapping: size differ in planes (i.e. grid also), user might select the best, but differ little only.
 

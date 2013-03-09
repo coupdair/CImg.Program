@@ -1,13 +1,25 @@
-#GUI
+#2D warp/mapping
+##2D warping GUI
 CImg.warping -i camera1.TIF -ob camera1_ -nx 11 -ny 8 -s 0.005
 CImg.warping -i camera2.TIF -ob camera2_ -nx 11 -ny 8 -s 0.005 -d 0
 CImg.warping -i camera3.TIF -ob camera3_ -nx 11 -ny 8 -s 0.005 -d 0
-
+##2D mapping
 CImg.mapping -i camera1.TIF -m camera1_warping_points.cimg -is camera1_image_size.cimg -o camera1_mapped.PNG
 CImg.mapping -i camera2.TIF -m camera2_warping_points.cimg -is camera1_image_size.cimg -o camera2_mapped.PNG
 CImg.mapping -i camera3.TIF -m camera3_warping_points.cimg -is camera1_image_size.cimg -o camera3_mapped.PNG
-
+##display
 animate -delay 50 camera?_mapped.PNG
+
+#3D warp/mapping
+##3D warping GUI
+ls position0.png position1.png | CImg.warping -i stdin -ob position0-1_ -nz 2
+##2D mapping
+CImg.mapping -i position0.png -m position0-1_warping_points.cimg -o position0_mapped.z0.0.png -is position0-1_image_size.cimg -z 0.0
+CImg.mapping -i position1.png -m position0-1_warping_points.cimg -o position1_mapped.z1.0.png -is position0-1_image_size.cimg -z 1.0
+##display
+CImg.display -i position0_mapped.z0.0.png
+CImg.display -i position1_mapped.z1.0.png
+
 
 exit
 
