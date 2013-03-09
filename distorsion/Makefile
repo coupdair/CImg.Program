@@ -1,9 +1,9 @@
 PROGRAMS = version warping mapping
 DOCUMENTATIONS = doc
 
-version_warping = v0.0.3.dev
-version_mapping = v0.0.3.dev
-version_format=v0.0.1.dev
+version_warping = v0.0.4
+version_mapping = v0.0.4
+version_format=v0.0.2
 #version_cimg = 125
 version_cimg = 139
 OPT_LIBRARY = -DMAPPING_VERSION=\"$(version_mapping)\" -DWARPING_FORMAT_VERSION=\"$(version_format)\" -DWARPING_VERSION=\"$(version_warping)\"

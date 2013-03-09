@@ -1,16 +1,22 @@
 warping
+_ warp/mapping: NetCDF support
 _ warping: detection of cross number
-
+_ warp/mapping: map(2,2,np,2(or 3)) contains (x,y(,z)) in image coordinate (i.e. pixel,pixel,plane), need to add (X,Y(,Z)) in real coordinate.
+  _ map(2,2,np,4(or 6))
+  _ use it for mapping image bound definition (i.e. image size), presently: bounds = 4 crosses
+  _ use it for mapping plane point definition (i.e. plane position in space), presently: plane = z0=float constant
 
 3D warping
-_ warping: 2D to 3D warping, i.e. single plane to multiple (e.g. 3 planes)
+v warping: 2D to 3D warping, i.e. single plane to multiple (e.g. 3 planes)
   v -nz
   v -oc
   v -i stdin
-  . -o
+  v -o
+  v -gz
   _ -os (?one size/grid per plane: z axis)
-  _ -gz
-_ mapping: 2D mapping in 3D space 1. at z, 2. in a plane through 3 points
+v mapping: 2D mapping in 3D space
+  v at z constant
+  _ in a plane through 3 points
 _ warping: detection of crosses on other planes
 _ warp/mapping: size differ in planes (i.e. grid also), user might select the best, but differ little only.
 

@@ -144,12 +144,14 @@ size.print("size");
   }//warping size
 
   //warping grid expansion
-//! \todo v remove warping expansion along z that might be too big, use "on the fly" 3D mapping using map.linear_atXYZ(x,y,z0)
   map.resize(width,height,-100,-100,3/*bilinear*/);
+map.print("map grid");
+
   //image mapping
   cimg_forXY(map_img,x,y)
     map_img(x,y)=src_img(map.linear_atXYZ(x,y,z0,0),map.linear_atXYZ(x,y,z0,1)); //closest
-//! \todo ? is there no need of z in map ? yes for perpendicular plane. So remove z coordinate in warping too.
+//! \todo _ there is no need of z in map presently, but needs will come with any plane especially in real coordinates (see _ToDo.txt file content)
+//! \todo _ next step would be to map any plane (passing through 3 points for example).
 //    map_img(x,y)=src_img.linear_atXY(map.linear_atXYZ(x,y,z0,0),map.linear_atXYZ(x,y,z0,1)); //bilinear
   ///save
 std::cerr<<"information: saving \""<<output_file_name.c_str()<<"\".\n"<<std::flush;

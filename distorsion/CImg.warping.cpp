@@ -45,11 +45,11 @@ int get_roi(const cimg_library::CImg<Timg> &binary_image,const cimg_library::CIm
   y0=y1=point(1);y0-=s;y1+=s;
   cimg_library::CImg<Timg> roi;
   cimg_library::CImg<bool> expand(4,1,1,1,false);
-//! \todo [low] done could be removed for expand only in the while condition
+//! \todo [very low] done could be removed for expand only in the while condition
   bool done=false;
   do
   {//expand ROI along y axis in upper direction
-//! \todo [low] better use count instead of max/min
+//! \todo [very low] better use count instead of max/min
     roi=binary_image.get_crop(x0,y0,x1,y1);
     if((roi.get_shared_line(0)).max()==1
      &&(roi.get_shared_line(0)).min()==1) expand(0)=true;
@@ -177,7 +177,10 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   const int   cross_x_nb=cimg_option("-nx",11,"number of markers along X axis.");
   const int   cross_y_nb=cimg_option("-ny", 8,"number of markers along Y axis.");
   const int   cross_z_nb=cimg_option("-nz", 1,"number of markers along Z axis for 3D warping (i.e. number of planes -i.e. images-).");
-  const float cross_step=cimg_option("-s",0.005,"step between crosses (meter).");
+  const float cross_x_step=cimg_option("-sx",0.005,"step between crosses along X (meter).");
+  const float cross_y_step=cimg_option("-sy",0.005,"step between crosses along Y (meter).");
+  if(cross_x_step!=cross_y_step) std::cerr<<"warning: X and Y cross steps differ.\n";
+  const float cross_z_step=cimg_option("-sz",0.001,"step between planes  along Z for 3D warping (meter).");
   const int GUI_delay=cimg_option("-d",2345,"delay to check result on display at the end of the program in ms (e.g. 0 no wait, but result can be seen in \"color.png\" image file).");
   ///stop if help requested
   if(show_help) {/*print_help(std::cerr);*/return 0;}
@@ -195,7 +198,6 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
 
   //calibration image
   cimg_library::CImgList<int> img(cross_z_nb);
-//! \todo . load from -i stdin
   {///load image(s)
   if(input_file_name=="stdin")
   {//load multiple images from stdin
@@ -220,7 +222,6 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
 
   //warping points
   cimg_library::CImg<float>      map(2,1,cross_z_nb,4);//4 coner points of source image(s): x=(x,y),z=plane,c=(tl,tr,bl,br) by image processing
-//! \todo . plane loop
 cimg_forZ(map,z)
 {
   //draw and display color image (for selection and point drawing)
@@ -280,17 +281,17 @@ cimg_forZ(map,z)
 }//plane loop
 
   //average size i.e. X and Y average length and pixel size
-//! \todo size along z axis
+//! \todo [low] size along z axis, presently use first plane, but these have only tiny differences (mapping pixel size could be fixed to any size, but it is better to fix it close to image projected one).
   cimg_library::CImg<float> size(2,1,1,2);//image size and pixel size along X and Y axes.
   {
   float magn,len;
-  local_magnification("X top",    map.get_shared_channel(0),map.get_shared_channel(1), cross_x_nb,cross_step, magn,len);//top    points i.e. magnification along X
+  local_magnification("X top",    map.get_shared_channel(0),map.get_shared_channel(1), cross_x_nb,cross_x_step, magn,len);//top    points i.e. magnification along X
   size(0,0)=magn; size(0,1)=len;
-  local_magnification("X bottom", map.get_shared_channel(2),map.get_shared_channel(3), cross_x_nb,cross_step, magn,len);//bottom points i.e. magnification along X
+  local_magnification("X bottom", map.get_shared_channel(2),map.get_shared_channel(3), cross_x_nb,cross_x_step, magn,len);//bottom points i.e. magnification along X
   size(0,0)+=magn;size(0,1)+=len;
-  local_magnification("Y left",   map.get_shared_channel(0),map.get_shared_channel(2), cross_y_nb,cross_step, magn,len);//left   points i.e. magnification along Y
+  local_magnification("Y left",   map.get_shared_channel(0),map.get_shared_channel(2), cross_y_nb,cross_y_step, magn,len);//left   points i.e. magnification along Y
   size(1,0)=magn; size(1,1)=len;
-  local_magnification("Y right",  map.get_shared_channel(1),map.get_shared_channel(3), cross_y_nb,cross_step, magn,len);//right  points i.e. magnification along Y
+  local_magnification("Y right",  map.get_shared_channel(1),map.get_shared_channel(3), cross_y_nb,cross_y_step, magn,len);//right  points i.e. magnification along Y
   size(1,0)+=magn;size(1,1)+=len;
   size/=2;//average
   }//average size
@@ -301,12 +302,12 @@ map.print("map xy");//x=(x,y),1,z=plane,c=(tl,tr,bl,br)
 map.print("map 2D (x,y)");
   if(cross_z_nb>1)
   {//add z in c=(x,y,z)
-//! \todo . reshape map test
     cimg_library::CImg<float> z_map(map.width(),map.height(),map.depth(),1);
     cimg_forZ(z_map,z) (z_map.get_shared_plane(z)).fill(z);
     map.append(z_map,'c');
 map.print("map 3D (x,y,z)");
   }//3D warping
+//! \todo [medium] add (X,Y(,Z)) real coordinnates in map into c=(x,y,z, X,Y,Z)
   //save warping
 std::cerr<<"information: saving \""<<warping_file_name.c_str()<<"\"\r"<<std::flush;
   map.save(warping_file_name.c_str());
@@ -320,6 +321,14 @@ std::cerr<<"information: saving \""<<size_file_name.c_str()<<"\"\r"<<std::flush;
 std::cerr<<"information: saving \""<<gridx_file_name.c_str()<<"\" and \""<<gridy_file_name.c_str()<<"\".\n"<<std::flush;
   grid[0].save(gridx_file_name.c_str());
   grid[1].save(gridy_file_name.c_str());
+  if(cross_z_nb>1)
+  {//save gridz
+    cimg_library::CImg<float> gridz(cross_z_nb);
+    cimg_forX(gridz,z) gridz(z)=z*cross_z_step;
+    grid.push_back(gridz);
+std::cerr<<"information: saving \""<<gridz_file_name.c_str()<<"\".\n"<<std::flush;
+    grid[2].save(gridz_file_name.c_str());
+  }//3D warping
   }//save grid
 cimg_library::cimg::sleep(GUI_delay);
   return 0;
