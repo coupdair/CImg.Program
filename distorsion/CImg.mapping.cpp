@@ -104,7 +104,6 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   const std::string input_file_name= cimg_option("-i","image.TIF","image to map (i.e. source).");
   const std::string warping_file_name=cimg_option("-m","warping_coefficient.cimg","warping coefficient (i.e. 4 corner points on source image).");
   const float z0=cimg_option("-z",0.0,"z position of mapping plane in the 3D warped volume (e.g. -z 1.23 ; should be inside 3D warping indexes e.g. in range [0.0-1.0[ for 2 planes).");
-  const unsigned int zscale=cimg_option("-zs",1,"3D mapping scale of the warped volume (e.g. -zs 12 ).");
   const std::string output_file_name=cimg_option("-o","mapped_image.PNG","mapped image (i.e. destination).");
   ////mapped image size: w,h
   int width= cimg_option("-W",321,"mapped image width.");
@@ -145,20 +144,13 @@ size.print("size");
   }//warping size
 
   //warping grid expansion
-//! \todo _ linear interpolation might be too big, should be done on the fly using map.linear_atXYZ(x,y,z0)
-  map.resize(width,height,-50*zscale,-100,3/*bilinear*/);
-map.print("map grid");
-
+//! \todo v remove warping expansion along z that might be too big, use "on the fly" 3D mapping using map.linear_atXYZ(x,y,z0)
+  map.resize(width,height,-100,-100,3/*bilinear*/);
   //image mapping
-  {
-  int zp=std::floor(z0*(float)zscale-0.000001);if(zp<0) zp=0;
-std::cerr<<"z0="<<z0<<"\n"<<std::flush;
-std::cerr<<"zscale="<<zscale<<"\n"<<std::flush;
-  std::cerr<<"plane index i.e. z0*scale="<<zp<<"\n"<<std::flush;
   cimg_forXY(map_img,x,y)
-    map_img(x,y)=src_img(map(x,y,zp,0),map(x,y,zp,1)); //closest
-//    map_img(x,y)=src_img.linear_atXY(map(x,y,0,0),map(x,y,0,1)); //bilinear
-  }
+    map_img(x,y)=src_img(map.linear_atXYZ(x,y,z0,0),map.linear_atXYZ(x,y,z0,1)); //closest
+//! \todo ? is there no need of z in map ? yes for perpendicular plane. So remove z coordinate in warping too.
+//    map_img(x,y)=src_img.linear_atXY(map.linear_atXYZ(x,y,z0,0),map.linear_atXYZ(x,y,z0,1)); //bilinear
   ///save
 std::cerr<<"information: saving \""<<output_file_name.c_str()<<"\".\n"<<std::flush;
   map_img.save(output_file_name.c_str());
