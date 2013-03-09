@@ -109,7 +109,6 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   int width= cimg_option("-W",321,"mapped image width.");
   int height=cimg_option("-H",123,"mapped image height.");
   const std::string size_file_name=cimg_option("-is","","image size in pixel [input from warping] (e.g. \"-is image_size.cimg\"; -W and -H ignored).");
-//! \todo [medium] add REAL pixel size and square for mapped image
   ///stop if help requested
   if(show_help) {/*print_help(std::cerr);*/return 0;}
 
@@ -150,7 +149,7 @@ map.print("map grid");
   //image mapping
   cimg_forXY(map_img,x,y)
     map_img(x,y)=src_img(map.linear_atXYZ(x,y,z0,0),map.linear_atXYZ(x,y,z0,1)); //closest
-//! \todo _ there is no need of z in map presently, but needs will come with any plane especially in real coordinates (see _ToDo.txt file content)
+//! \todo [medium] there is no need of z in map presently, but needs will come with any plane especially in real coordinates (see _ToDo.txt file content)
 //! \todo _ next step would be to map any plane (passing through 3 points for example).
 //    map_img(x,y)=src_img.linear_atXY(map.linear_atXYZ(x,y,z0,0),map.linear_atXYZ(x,y,z0,1)); //bilinear
   ///save
