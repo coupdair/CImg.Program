@@ -174,9 +174,9 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   std::string gridx_file_name=cimg_option("-gx","grid_x.cimg","grid of X axis in meter [output].");
   std::string gridy_file_name=cimg_option("-gy","grid_y.cimg","grid of Y axis in meter [output].");
   std::string gridz_file_name=cimg_option("-gz","grid_z.cimg","grid of Z axis in meter [output].");
-  const int   cross_x_nb=cimg_option("-nx",11,"number of markers along X axis.");
-  const int   cross_y_nb=cimg_option("-ny", 8,"number of markers along Y axis.");
-  const int   cross_z_nb=cimg_option("-nz", 1,"number of markers along Z axis for 3D warping (i.e. number of planes -i.e. images-).");
+  int cross_x_nb=cimg_option("-nx",11,"number of markers along X axis.");
+  int cross_y_nb=cimg_option("-ny", 8,"number of markers along Y axis.");
+  int cross_z_nb=cimg_option("-nz", 1,"number of markers along Z axis for 3D warping (i.e. number of planes -i.e. images-).");
   const float cross_x_step=cimg_option("-sx",0.005,"step between crosses along X (meter).");
   const float cross_y_step=cimg_option("-sy",0.005,"step between crosses along Y (meter).");
   if(cross_x_step!=cross_y_step) std::cerr<<"warning: X and Y cross steps differ.\n";
@@ -267,7 +267,27 @@ cimg_forZ(map,z)
     get_position_greylevel(img[z], rectangle,pts,color_img,disp);
     //write point to map
     map.draw_image(0,0,z,c,pts);
-  }//get ROIs
+  }//centroid
+  //detect number of crosses
+  if(cross_x_nb<0||cross_y_nb<0)
+  {
+//draw line betteen tl and tr points
+    int c=0;
+    int x0=map(0,0,z,c);//x
+    int y0=map(1,0,z,c);//y
+    c=1;
+    int x1=map(0,0,z,c);//x
+    int y1=map(1,0,z,c);//y
+std::cerr<<"line=("<<x0<<","<<y0<<", "<<x1<<","<<y1<<")";
+//draw detected line
+const unsigned char color[3]={0,0,255};
+color_img.draw_line(x0,y0,x1,y1,color);
+disp.display(color_img);
+  }//detect number of crosses
+  //draw other cross positions (not detected, but interpolated)
+  {
+    
+  }
   //save GUI display
   {
   char fileName[1024];
@@ -277,7 +297,7 @@ cimg_forZ(map,z)
     strcpy(fileName,color_file_name.c_str());
   std::cerr<<"information: saving \""<<fileName<<"\"\n"<<std::flush;
   color_img.save(fileName);
-  }
+  }//save color image
 }//plane loop
 
   //average size i.e. X and Y average length and pixel size
