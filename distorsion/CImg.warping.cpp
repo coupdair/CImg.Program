@@ -288,6 +288,11 @@ disp.display(color_img);
     float x=x0,y=y0;
     float dx=(x1-x0)/(float)size,dy=(y1-y0)/(float)size;
     cimg_forX(line,i) {line(i)=img[z](x,y);x+=dx;y+=dy;}
+    line.threshold((line.max()+line.min())/2);
+    int d=0;
+    cimg_for_insideX(line,i,1) {const int di=line(i-1)-line(i); if(di==0) continue; ++d;}
+    cross_x_nb=d/2;
+std::cerr<<"cross x number="<<cross_x_nb<<"\n";
 //draw extracted line
 line.display_graph("line");
   }//detect number of crosses
