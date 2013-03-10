@@ -324,6 +324,7 @@ cimg_forZ(map,z)
   {
 //! \todo should be get_shared_plane instead of get_shared_channel
     cross_number_detection(img[z],map.get_shared_channel(0),map.get_shared_channel(1),cross_x_nb,color_img,disp);//top    points
+    cross_number_detection(img[z],map.get_shared_channel(0),map.get_shared_channel(2),cross_y_nb,color_img,disp);//left   points
   }//detect number of crosses
   //draw other cross positions (not detected, but interpolated)
   {
