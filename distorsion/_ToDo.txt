@@ -1,6 +1,6 @@
 warping
+v warping: number of cross detection
 _ warp/mapping: NetCDF support
-_ warping: detection of cross number
 _ warp/mapping: map(2,2,np,2(or 3)) contains (x,y(,z)) in image coordinate (i.e. pixel,pixel,plane), need to add (X,Y(,Z)) in real coordinate.
   _ map(2,2,np,4(or 6))
   _ use it for mapping image bound definition (i.e. image size), presently: bounds = 4 crosses

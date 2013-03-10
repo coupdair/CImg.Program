@@ -146,7 +146,7 @@ std::cout<<"magnification="<<dXr/dX<<" m/pixel, i.e. "<<dX/dXr<<" pixel/m\n";
 
 //! dectection of cross number along a line (e.g. top line between top left and top right points)
 template<typename Timg, typename Tpts, typename Tcolor>
-int cross_number_detection(const cimg_library::CImg<Timg> &image,
+int cross_number_detection(const std::string &title, const cimg_library::CImg<Timg> &image,
   const cimg_library::CImg<Tpts> &point1,const cimg_library::CImg<Tpts> &point2,
   int &cross_nb,
   cimg_library::CImg<Tcolor> &color_image,cimg_library::CImgDisplay &display,
@@ -157,7 +157,7 @@ int cross_number_detection(const cimg_library::CImg<Timg> &image,
   int y0=point1(1);//y
   int x1=point2(0);//x
   int y1=point2(1);//y
-std::cerr<<"line=("<<x0<<","<<y0<<", "<<x1<<","<<y1<<")";
+std::cout<<title<<" line from ("<<x0<<","<<y0<<") to ("<<x1<<","<<y1<<")";
   //draw detected line
   if(draw_line)
   {
@@ -179,7 +179,7 @@ std::cerr<<"line=("<<x0<<","<<y0<<", "<<x1<<","<<y1<<")";
   int d=0;//edge counter
   cimg_for_insideX(line,i,1) {const int di=line(i-1)-line(i); if(di==0) continue; ++d;}
   cross_nb=d/2+1;
-std::cerr<<"cross number="<<cross_nb<<"\n";
+std::cout<<" cross number="<<cross_nb<<"\n";
   }
   //draw extracted cross positions
   if(draw_points)
@@ -322,9 +322,13 @@ cimg_forZ(map,z)
   //detect number of crosses
   if(cross_x_nb<0||cross_y_nb<0)
   {
-//! \todo should be get_shared_plane instead of get_shared_channel
-    cross_number_detection(img[z],map.get_shared_channel(0),map.get_shared_channel(1),cross_x_nb,color_img,disp);//top    points
-    cross_number_detection(img[z],map.get_shared_channel(0),map.get_shared_channel(2),cross_y_nb,color_img,disp);//left   points
+    int nbx,nby;
+    cross_number_detection("X top ",   img[z],map.get_shared_plane(z,0),map.get_shared_plane(z,1),cross_x_nb,color_img,disp);//top    points
+    cross_number_detection("X bottom ",img[z],map.get_shared_plane(z,2),map.get_shared_plane(z,3),       nbx,color_img,disp);//bottom points
+    if(nbx!=cross_x_nb) std::cerr<<"warning: number of detected cross differ on top and bottom lines.\n"<<std::flush;
+    cross_number_detection("Y left ",  img[z],map.get_shared_plane(z,0),map.get_shared_plane(z,2),cross_y_nb,color_img,disp);//left   points
+    cross_number_detection("Y right ", img[z],map.get_shared_plane(z,1),map.get_shared_plane(z,3),       nby,color_img,disp);//right  points
+    if(nby!=cross_y_nb) std::cerr<<"warning: number of detected cross differ on left and right lines.\n"<<std::flush;
   }//detect number of crosses
   //draw other cross positions (not detected, but interpolated)
   {
