@@ -273,6 +273,7 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
 
   //warping points
   cimg_library::CImg<float>      map(2,1,cross_z_nb,4);//4 coner points of source image(s): x=(x,y),z=plane,c=(tl,tr,bl,br) by image processing
+
 cimg_forZ(map,z)
 {
   //draw and display color image (for selection and point drawing)
@@ -288,12 +289,28 @@ cimg_forZ(map,z)
   cimg_library::CImg<float> pts(2);
   cimg_library::CImg<float> hand_map(2,1,1,4);//4 coner points of source image(s): x=(x,y),c=(tl,tr,bl,br) by hand
 
+//other planes
+if(z>1)
+{
+//! \todo . remove this temporary hand selection
   cimg_forC(hand_map,c)
   {
     get_point(color_img,pts,disp);//or get_channel(c)
     //write point to map
     hand_map.draw_image(0,0,0,c,pts);
   }//get points
+
+}
+else //first plane
+{//cross selection by hand
+  cimg_forC(hand_map,c)
+  {
+    get_point(color_img,pts,disp);//or get_channel(c)
+    //write point to map
+    hand_map.draw_image(0,0,0,c,pts);
+  }//get points
+}//cross selection by hand
+
   //detect center
   ///threshold (using last clicked point)
   int min=img[z](pts(0),pts(1));
@@ -308,6 +325,7 @@ cimg_forZ(map,z)
     get_roi(bin_img,hand_map.get_shared_channel(c),rectangle,
       color_img,disp);
   }//get ROIs
+
   ///centroid
   cimg_forC(roi,c)
   {
@@ -330,10 +348,7 @@ cimg_forZ(map,z)
     cross_number_detection("Y right  ",img[z],map.get_shared_plane(z,1),map.get_shared_plane(z,3),       nby,color_img,disp);//right  points
     if(nby!=cross_y_nb) std::cerr<<"warning: number of detected cross differ on left and right lines.\n"<<std::flush;
   }//detect number of crosses
-  //draw other cross positions (not detected, but interpolated)
-  {
-    
-  }
+  //! \todo [very low] draw other cross positions (not detected, but interpolated)
   //save GUI display
   {
   char fileName[1024];
