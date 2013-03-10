@@ -273,6 +273,7 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
 
   //warping points
   cimg_library::CImg<float>      map(2,1,cross_z_nb,4);//4 coner points of source image(s): x=(x,y),z=plane,c=(tl,tr,bl,br) by image processing
+  cimg_library::CImg<int> roi_size(2);//window size corresponding to marker in source image
 
 cimg_forZ(map,z)
 {
@@ -290,8 +291,22 @@ cimg_forZ(map,z)
   cimg_library::CImg<float> hand_map(2,1,1,4);//4 coner points of source image(s): x=(x,y),c=(tl,tr,bl,br) by hand
 
 //other planes
-if(z>1)
+if(z>0)
 {
+  //extract roi around previous cross
+  cimg_library::CImg<int> tl=map.get_shared_plane(z-1,0)-roi_size/2;//tl=pt-size/2
+  cimg_library::CImg<int> br=map.get_shared_plane(z-1,0)+roi_size/2;//br=pt+size/2
+(map.get_shared_plane(z-1,0)).print("point");
+roi_size.print("roi size");
+tl.print("tl");
+br.print("br");
+  cimg_library::CImg<int> oldROI=img[z-1].get_crop(tl(0),tl(1),br(0),br(1));
+  cimg_library::CImg<int> newROI=img[z  ].get_crop(tl(0),tl(1),br(0),br(1));
+oldROI.display("old ROI");
+newROI.display("new ROI");
+  //threshold
+  //img[z]
+
 //! \todo . remove this temporary hand selection
   cimg_forC(hand_map,c)
   {
@@ -299,7 +314,6 @@ if(z>1)
     //write point to map
     hand_map.draw_image(0,0,0,c,pts);
   }//get points
-
 }
 else //first plane
 {//cross selection by hand
@@ -325,7 +339,10 @@ else //first plane
     get_roi(bin_img,hand_map.get_shared_channel(c),rectangle,
       color_img,disp);
   }//get ROIs
-
+(roi.get_shared_channel(0)).print("roi 0");
+  roi_size(0)=roi(0,0,0,0)-roi(1,0,0,0);//wsx=x1-x0 of tr and tl
+  roi_size(1)=roi(0,1,0,0)-roi(1,1,0,0);//wsy=y1-y0 of bl and tl
+roi_size.print("roi size (of roi 0)");
   ///centroid
   cimg_forC(roi,c)
   {
