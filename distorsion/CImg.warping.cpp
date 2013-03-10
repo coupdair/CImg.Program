@@ -292,11 +292,13 @@ cimg_forZ(map,z)
 
 //other planes
 if(z>0)
-{
+{//auto map setup in hand_map
+  cimg_forC(hand_map,c)
+  {
 const unsigned char color[3]={255,255,255};
   //extract roi around previous cross
-  cimg_library::CImg<int> tl=map.get_shared_plane(z-1,0)-roi_size/2;//tl=pt-size/2
-  cimg_library::CImg<int> br=map.get_shared_plane(z-1,0)+roi_size/2;//br=pt+size/2
+  cimg_library::CImg<int> tl=map.get_shared_plane(z-1,c)-roi_size/2;//tl=pt-size/2
+  cimg_library::CImg<int> br=map.get_shared_plane(z-1,c)+roi_size/2;//br=pt+size/2
 (map.get_shared_plane(z-1,0)).print("point");
 roi_size.print("roi size");
 tl.print("tl");
@@ -307,26 +309,22 @@ color_img.draw_point(br(0),br(1),color);
 color_img.draw_point(br(0),tl(1),color);
   cimg_library::CImg<int> oldROI=img[z-1].get_crop(tl(0),tl(1),br(0),br(1));
   cimg_library::CImg<int> newROI=img[z  ].get_crop(tl(0),tl(1),br(0),br(1));
-oldROI.display("old ROI");
-newROI.display("new ROI");
+//oldROI.display("old ROI");
+//newROI.display("new ROI");
   //get a point on new cross
   int min=newROI.min();
   int xp,yp;
   cimg_forXY(newROI,x,y) if(newROI(x,y)==min) {xp=x;yp=y;break;}
-  xp+=br(0);
-  yp+=br(1);
+  pts(0)=xp+=tl(0);
+  pts(1)=yp+=tl(1);
 std::cerr<<"auto-selected point=("<<xp<<","<<yp<<")\n";
 color_img.draw_point(xp,yp,color);
 disp.display(color_img);
 
-//! \todo . remove this temporary hand selection
-  cimg_forC(hand_map,c)
-  {
-    get_point(color_img,pts,disp);//or get_channel(c)
     //write point to map
     hand_map.draw_image(0,0,0,c,pts);
   }//get points
-}
+}//auto selection
 else //first plane
 {//cross selection by hand
   cimg_forC(hand_map,c)
@@ -352,8 +350,8 @@ else //first plane
       color_img,disp);
   }//get ROIs
 (roi.get_shared_channel(0)).print("roi 0");
-  roi_size(0)=roi(0,0,0,0)-roi(1,0,0,0);//wsx=x1-x0 of tr and tl
-  roi_size(1)=roi(0,1,0,0)-roi(1,1,0,0);//wsy=y1-y0 of bl and tl
+  roi_size(0)=roi(1,0,0,0)-roi(0,0,0,0);//wsx=x1-x0 of tr and tl
+  roi_size(1)=roi(1,1,0,0)-roi(0,1,0,0);//wsy=y1-y0 of bl and tl
 roi_size.print("roi size (of roi 0)");
   ///centroid
   cimg_forC(roi,c)
