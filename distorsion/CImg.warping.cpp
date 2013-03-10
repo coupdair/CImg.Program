@@ -144,6 +144,57 @@ std::cout<<"magnification="<<dXr/dX<<" m/pixel, i.e. "<<dX/dXr<<" pixel/m\n";
   magnification=dXr/dX;
 }//local_magnification
 
+//! dectection of cross number along a line (e.g. top line between top left and top right points)
+template<typename Timg, typename Tpts, typename Tcolor>
+int cross_number_detection(const cimg_library::CImg<Timg> &image,
+  const cimg_library::CImg<Tpts> &point1,const cimg_library::CImg<Tpts> &point2,
+  int &cross_nb,
+  cimg_library::CImg<Tcolor> &color_image,cimg_library::CImgDisplay &display,
+  bool draw_points=true,bool draw_line=false)
+{
+//draw line betteen tl and tr points
+  int x0=point1(0);//x
+  int y0=point1(1);//y
+  int x1=point2(0);//x
+  int y1=point2(1);//y
+std::cerr<<"line=("<<x0<<","<<y0<<", "<<x1<<","<<y1<<")";
+  //draw detected line
+  if(draw_line)
+  {
+    const unsigned char color[3]={0,0,255};
+    color_image.draw_line(x0,y0,x1,y1,color);
+    display.display(color_image);
+  }//display current line
+  //extract line
+  const int size=std::sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
+  cimg_library::CImg<int> line(size);
+  {//extract line data
+  float x=x0,y=y0;
+  const float dx=(x1-x0)/(float)size,dy=(y1-y0)/(float)size;
+  cimg_forX(line,i) {line(i)=image(x,y);x+=dx;y+=dy;}
+  }
+  {//count crosses on line
+  line.blur(3);//smooth data for noisy grey level
+  line.threshold((line.max()+line.min())/2);//detach black cross (set to 0) and white background (set to 1)
+  int d=0;//edge counter
+  cimg_for_insideX(line,i,1) {const int di=line(i-1)-line(i); if(di==0) continue; ++d;}
+  cross_nb=d/2+1;
+std::cerr<<"cross number="<<cross_nb<<"\n";
+  }
+  //draw extracted cross positions
+  if(draw_points)
+  {
+    const unsigned char color[3]={0,255,255};
+    float x=x0,y=y0;
+    const float dx=(x1-x0)/(float)(cross_nb-1);
+    const float dy=(y1-y0)/(float)(cross_nb-1);
+    for(int i=0;i<cross_nb;++i,x+=dx,y+=dy) color_image.draw_point(x,y,color);
+    display.display(color_image);
+  }
+//display extracted line
+//line.display_graph("line");
+}//cross_number_detection
+
 int main(int argc, char *argv[])
 { 
 //commmand line options
@@ -271,37 +322,8 @@ cimg_forZ(map,z)
   //detect number of crosses
   if(cross_x_nb<0||cross_y_nb<0)
   {
-//draw line betteen tl and tr points
-    int c=0;
-    int x0=map(0,0,z,c);//x
-    int y0=map(1,0,z,c);//y
-    c=1;
-    int x1=map(0,0,z,c);//x
-    int y1=map(1,0,z,c);//y
-std::cerr<<"line=("<<x0<<","<<y0<<", "<<x1<<","<<y1<<")";
-    //draw detected line
-    const unsigned char color[3]={0,0,255};
-//    color_img.draw_line(x0,y0,x1,y1,color);
-    disp.display(color_img);
-    //extract line
-    int size=std::sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
-    cimg_library::CImg<int> line(size);
-    float x=x0,y=y0;
-    float dx=(x1-x0)/(float)size,dy=(y1-y0)/(float)size;
-    cimg_forX(line,i) {line(i)=img[z](x,y);x+=dx;y+=dy;}
-    line.threshold((line.max()+line.min())/2);
-    int d=0;
-    cimg_for_insideX(line,i,1) {const int di=line(i-1)-line(i); if(di==0) continue; ++d;}
-    cross_x_nb=d/2+1;
-std::cerr<<"cross x number="<<cross_x_nb<<"\n";
-    //draw extracted cross positions
-    x=x0;y=y0;
-    dx=(x1-x0)/(float)(cross_x_nb-1);
-    dy=(y1-y0)/(float)(cross_x_nb-1);
-    for(int i=0;i<cross_x_nb;++i,x+=dx,y+=dy) color_img.draw_point(x,y,color);
-    disp.display(color_img);
-//display extracted line
-line.display_graph("line");
+//! \todo should be get_shared_plane instead of get_shared_channel
+    cross_number_detection(img[z],map.get_shared_channel(0),map.get_shared_channel(1),cross_x_nb,color_img,disp);//top    points
   }//detect number of crosses
   //draw other cross positions (not detected, but interpolated)
   {
