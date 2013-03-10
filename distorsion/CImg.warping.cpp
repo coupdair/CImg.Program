@@ -293,6 +293,7 @@ cimg_forZ(map,z)
 //other planes
 if(z>0)
 {
+const unsigned char color[3]={255,255,255};
   //extract roi around previous cross
   cimg_library::CImg<int> tl=map.get_shared_plane(z-1,0)-roi_size/2;//tl=pt-size/2
   cimg_library::CImg<int> br=map.get_shared_plane(z-1,0)+roi_size/2;//br=pt+size/2
@@ -300,12 +301,23 @@ if(z>0)
 roi_size.print("roi size");
 tl.print("tl");
 br.print("br");
+color_img.draw_point(tl(0),tl(1),color);
+color_img.draw_point(tl(0),br(1),color);
+color_img.draw_point(br(0),br(1),color);
+color_img.draw_point(br(0),tl(1),color);
   cimg_library::CImg<int> oldROI=img[z-1].get_crop(tl(0),tl(1),br(0),br(1));
   cimg_library::CImg<int> newROI=img[z  ].get_crop(tl(0),tl(1),br(0),br(1));
 oldROI.display("old ROI");
 newROI.display("new ROI");
-  //threshold
-  //img[z]
+  //get a point on new cross
+  int min=newROI.min();
+  int xp,yp;
+  cimg_forXY(newROI,x,y) if(newROI(x,y)==min) {xp=x;yp=y;break;}
+  xp+=br(0);
+  yp+=br(1);
+std::cerr<<"auto-selected point=("<<xp<<","<<yp<<")\n";
+color_img.draw_point(xp,yp,color);
+disp.display(color_img);
 
 //! \todo . remove this temporary hand selection
   cimg_forC(hand_map,c)
