@@ -323,11 +323,11 @@ cimg_forZ(map,z)
   if(cross_x_nb<0||cross_y_nb<0)
   {
     int nbx,nby;
-    cross_number_detection("X top ",   img[z],map.get_shared_plane(z,0),map.get_shared_plane(z,1),cross_x_nb,color_img,disp);//top    points
+    cross_number_detection("X top    ",img[z],map.get_shared_plane(z,0),map.get_shared_plane(z,1),cross_x_nb,color_img,disp);//top    points
     cross_number_detection("X bottom ",img[z],map.get_shared_plane(z,2),map.get_shared_plane(z,3),       nbx,color_img,disp);//bottom points
     if(nbx!=cross_x_nb) std::cerr<<"warning: number of detected cross differ on top and bottom lines.\n"<<std::flush;
-    cross_number_detection("Y left ",  img[z],map.get_shared_plane(z,0),map.get_shared_plane(z,2),cross_y_nb,color_img,disp);//left   points
-    cross_number_detection("Y right ", img[z],map.get_shared_plane(z,1),map.get_shared_plane(z,3),       nby,color_img,disp);//right  points
+    cross_number_detection("Y left   ",img[z],map.get_shared_plane(z,0),map.get_shared_plane(z,2),cross_y_nb,color_img,disp);//left   points
+    cross_number_detection("Y right  ",img[z],map.get_shared_plane(z,1),map.get_shared_plane(z,3),       nby,color_img,disp);//right  points
     if(nby!=cross_y_nb) std::cerr<<"warning: number of detected cross differ on left and right lines.\n"<<std::flush;
   }//detect number of crosses
   //draw other cross positions (not detected, but interpolated)
@@ -373,7 +373,7 @@ map.print("map 2D (x,y)");
     map.append(z_map,'c');
 map.print("map 3D (x,y,z)");
   }//3D warping
-//! \todo [medium] add (X,Y(,Z)) real coordinnates in map into c=(x,y,z, X,Y,Z)
+//! \todo [medium] add (X,Y(,Z)) real coordinates in map into c=(x,y,z, X,Y,Z)
   //save warping
 std::cerr<<"information: saving \""<<warping_file_name.c_str()<<"\"\r"<<std::flush;
   map.save(warping_file_name.c_str());
