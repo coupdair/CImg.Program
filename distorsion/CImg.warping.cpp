@@ -195,6 +195,44 @@ std::cout<<" cross number="<<cross_nb<<"\n";
 //line.display_graph("line");
 }//cross_number_detection
 
+//! search for marker in plane from previous position (in the previous plane)
+/**
+ * \param z [in] current plane index (i.e. z>0 to have valid previous plane)
+ * \note map as single point e.g. tl only (use \c map.get_shared_channel(c) function)
+**/
+template<typename Timg, typename Tpts, typename Troi,typename Tcolor>
+int get_point_in_next_plane(const int z,const cimg_library::CImgList<Timg> &img,
+  const cimg_library::CImg<Tpts> &map,cimg_library::CImg<Troi> &roi_size,
+  cimg_library::CImg<Tpts> &point,
+  cimg_library::CImg<Tcolor> &color_image,cimg_library::CImgDisplay &display)
+{
+const unsigned char color[3]={255,255,255};
+  //extract roi around previous cross
+  cimg_library::CImg<Troi> tl=map.get_shared_plane(z-1/*,c*/)-roi_size/2;//tl=pt-size/2
+  cimg_library::CImg<Troi> br=map.get_shared_plane(z-1/*,c*/)+roi_size/2;//br=pt+size/2
+(map.get_shared_plane(z-1,0)).print("point");
+roi_size.print("roi size");
+tl.print("tl");
+br.print("br");
+color_image.draw_point(tl(0),tl(1),color);
+color_image.draw_point(tl(0),br(1),color);
+color_image.draw_point(br(0),br(1),color);
+color_image.draw_point(br(0),tl(1),color);
+  cimg_library::CImg<Timg> oldROI=img[z-1].get_crop(tl(0),tl(1),br(0),br(1));
+  cimg_library::CImg<Timg> newROI=img[z  ].get_crop(tl(0),tl(1),br(0),br(1));
+//oldROI.display("old ROI");
+//newROI.display("new ROI");
+  //get a point on new cross
+  int min=newROI.min();
+  int xp,yp;
+  cimg_forXY(newROI,x,y) if(newROI(x,y)==min) {xp=x;yp=y;break;}
+  point(0)=xp+=tl(0);
+  point(1)=yp+=tl(1);
+std::cerr<<"auto-selected point=("<<xp<<","<<yp<<")\n";
+color_image.draw_point(xp,yp,color);
+display.display(color_image);
+}//get_point_in_next_plane
+
 int main(int argc, char *argv[])
 { 
 //commmand line options
@@ -295,34 +333,9 @@ if(z>0)
 {//auto map setup in hand_map
   cimg_forC(hand_map,c)
   {
-//! \todo [high] move this part in a function
-{
-const unsigned char color[3]={255,255,255};
-  //extract roi around previous cross
-  cimg_library::CImg<int> tl=map.get_shared_plane(z-1,c)-roi_size/2;//tl=pt-size/2
-  cimg_library::CImg<int> br=map.get_shared_plane(z-1,c)+roi_size/2;//br=pt+size/2
-(map.get_shared_plane(z-1,0)).print("point");
-roi_size.print("roi size");
-tl.print("tl");
-br.print("br");
-color_img.draw_point(tl(0),tl(1),color);
-color_img.draw_point(tl(0),br(1),color);
-color_img.draw_point(br(0),br(1),color);
-color_img.draw_point(br(0),tl(1),color);
-  cimg_library::CImg<int> oldROI=img[z-1].get_crop(tl(0),tl(1),br(0),br(1));
-  cimg_library::CImg<int> newROI=img[z  ].get_crop(tl(0),tl(1),br(0),br(1));
-//oldROI.display("old ROI");
-//newROI.display("new ROI");
-  //get a point on new cross
-  int min=newROI.min();
-  int xp,yp;
-  cimg_forXY(newROI,x,y) if(newROI(x,y)==min) {xp=x;yp=y;break;}
-  pts(0)=xp+=tl(0);
-  pts(1)=yp+=tl(1);
-std::cerr<<"auto-selected point=("<<xp<<","<<yp<<")\n";
-color_img.draw_point(xp,yp,color);
-disp.display(color_img);
-}
+//! \todo . [high] move this part in a function
+    //search for marker in plane from previous position in the previous plane
+    get_point_in_next_plane(z,img,map.get_shared_channel(c), roi_size,pts,color_img,disp);
     //write point to map
     hand_map.draw_image(0,0,0,c,pts);
   }//get points
