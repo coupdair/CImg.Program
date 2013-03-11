@@ -295,6 +295,8 @@ if(z>0)
 {//auto map setup in hand_map
   cimg_forC(hand_map,c)
   {
+//! \todo [high] move this part in a function
+{
 const unsigned char color[3]={255,255,255};
   //extract roi around previous cross
   cimg_library::CImg<int> tl=map.get_shared_plane(z-1,c)-roi_size/2;//tl=pt-size/2
@@ -320,7 +322,7 @@ color_img.draw_point(br(0),tl(1),color);
 std::cerr<<"auto-selected point=("<<xp<<","<<yp<<")\n";
 color_img.draw_point(xp,yp,color);
 disp.display(color_img);
-
+}
     //write point to map
     hand_map.draw_image(0,0,0,c,pts);
   }//get points
