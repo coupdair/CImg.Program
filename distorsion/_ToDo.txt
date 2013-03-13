@@ -5,6 +5,7 @@ _ warp/mapping: map(2,2,np,2(or 3)) contains (x,y(,z)) in image coordinate (i.e.
   _ map(2,2,np,4(or 6))
   _ use it for mapping image bound definition (i.e. image size), presently: bounds = 4 crosses
   _ use it for mapping plane point definition (i.e. plane position in space), presently: plane = z0=float constant
+_ set threshold level as option (different than 0.5)
 
 3D warping
 v warping: 2D to 3D warping, i.e. single plane to multiple (e.g. 3 planes)
