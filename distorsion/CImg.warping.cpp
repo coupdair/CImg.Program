@@ -266,6 +266,7 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   int cross_x_nb=cimg_option("-nx",11,"number of markers along X axis.");
   int cross_y_nb=cimg_option("-ny", 8,"number of markers along Y axis.");
   int cross_z_nb=cimg_option("-nz", 1,"number of markers along Z axis for 3D warping (i.e. number of planes -i.e. images-).");
+  float cross_threshold=cimg_option("-t", 0.5," coefficient for detection cross-threshold.");
   const float cross_x_step=cimg_option("-sx",0.005,"step between crosses along X (meter).");
   const float cross_y_step=cimg_option("-sy",0.005,"step between crosses along Y (meter).");
   if(cross_x_step!=cross_y_step) std::cerr<<"warning: X and Y cross steps differ.\n";
@@ -354,7 +355,7 @@ else //first plane
   ///threshold (using last clicked point)
   int min=img[z](pts(0),pts(1));
   int max=img[z].max();
-  cimg_library::CImg<int> bin_img=img[z].get_threshold((max-min)/2+min);
+  cimg_library::CImg<int> bin_img=img[z].get_threshold((max-min)*cross_threshold+min);
 //bin_img.display("binary");
   ///ROI around marker
   cimg_library::CImg<int> roi(2,2,1,4);//4 coner window corresponding to marker in source image: x,y=(x,y),c=(tl,tr,bl,br)
