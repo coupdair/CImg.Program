@@ -354,7 +354,7 @@ else //first plane
   ///threshold (using last clicked point)
   int min=img[z](pts(0),pts(1));
   int max=img[z].max();
-  cimg_library::CImg<int> bin_img=img[z].get_threshold((max-min)/2);
+  cimg_library::CImg<int> bin_img=img[z].get_threshold((max-min)/2+min);
 //bin_img.display("binary");
   ///ROI around marker
   cimg_library::CImg<int> roi(2,2,1,4);//4 coner window corresponding to marker in source image: x,y=(x,y),c=(tl,tr,bl,br)
