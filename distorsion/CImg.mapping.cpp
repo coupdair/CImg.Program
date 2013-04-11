@@ -121,7 +121,7 @@ cimg_library::CImg<T> plane_by_3_points(cimg_library::CImg<T> p0,cimg_library::C
 
 //! set plane equation from 3 points
 template<typename T>
-CImg<T> plane_by_3_points(cimg_library::CImg<T> points)
+cimg_library::CImg<T> plane_by_3_points(cimg_library::CImg<T> points)
 {
 //plane defined by 3 points: (point,0,0,x/y/z) x/y/z components in [pixel,pixel,plane] units
   cimg_library::CImg<T> p0(1,3,1,1, points(0,0,0,0),points(0,0,0,1),points(0,0,0,2));
@@ -200,17 +200,19 @@ map.print("map grid");
 //set z0 plane
 {
 points.fill(0);//set all to 0 by default, e.g. origin i.e. (0,0)
-points(1,0,0,0)=;//x axis i.e. (1,0)
-points(2,0,0,1)=;//y axis i.e. (0,1)
+points(1,0,0,0)=1;//x axis i.e. (1,0)
+points(2,0,0,1)=1;//y axis i.e. (0,1)
 cimg_forX(points,i) points(i,0,0,2)=z0;//set all z to z0
-points.print("points at z0")
+points.print("points at z0");
 }
+  //! \todo . plane by 3 points: ax+by+cz+d=0
   cimg_library::CImg<float> plane=plane_by_3_points(points);
 plane.print("plane");
   //bilinear(x,y) from 3 z positions
   cimg_forXY(z_map,x,y)
     z_map(x,y)=z0;//plane z=cst
-//    z_map(x,y)=-(ax+by+d)/c;//! \todo . by 3 points: ax+by+cz+d=0
+  //! \todo . z map for plane
+//    z_map(x,y)=-(x*plane[0]+y*plane[1]+plane[3])/plane[2];//z=-(ax+by+d)/c
 z_map.print("z map of plane");
   //image mapping
   cimg_forXY(map_img,x,y)

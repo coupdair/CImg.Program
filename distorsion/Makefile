@@ -1,4 +1,5 @@
 PROGRAMS = version warping mapping
+PROGRAMS = version mapping
 DOCUMENTATIONS = doc
 
 version_warping = v0.0.7
