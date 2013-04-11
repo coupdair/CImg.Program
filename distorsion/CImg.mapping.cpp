@@ -146,11 +146,19 @@ size.print("size");
   map.resize(width,height,-100,-100,3/*bilinear*/);
 map.print("map grid");
 
+  //depth map of mapping plane
+//! \todo . map any plane (passing through 3 points for example).
+  cimg_library::CImg<float> z_map(map_img.width(),map_img.height());
+  cimg_library::CImg<float> plane(3,1,1,3);//plane defined by 3 points: (point,0,0,x/y/z) x/y/z components in [pixel,pixel,plane] units
+  //bilinear(x,y) from 3 z positions
+  cimg_forXY(z_map,x,y)
+    z_map(x,y)=z0;//! \todo . plane z=cst
+//    z_map(x,y)=-(ax+by+d)/c;//! \todo _ by 3 points: ax+by+cz+d=0
+
   //image mapping
   cimg_forXY(map_img,x,y)
-    map_img(x,y)=src_img(map.linear_atXYZ(x,y,z0,0),map.linear_atXYZ(x,y,z0,1)); //closest
+    map_img(x,y)=src_img(map.linear_atXYZ(x,y,z_map(x,y),0),map.linear_atXYZ(x,y,z_map(x,y),1)); //closest
 //! \todo [medium] there is no need of z in map presently, but needs will come with any plane especially in real coordinates (see _ToDo.txt file content)
-//! \todo _ next step would be to map any plane (passing through 3 points for example).
 //    map_img(x,y)=src_img.linear_atXY(map.linear_atXYZ(x,y,z0,0),map.linear_atXYZ(x,y,z0,1)); //bilinear
   ///save
 std::cerr<<"information: saving \""<<output_file_name.c_str()<<"\".\n"<<std::flush;
