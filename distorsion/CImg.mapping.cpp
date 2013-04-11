@@ -84,6 +84,53 @@
 //CImg Library
 #include "../../CImg/CImg.h"
 
+//! set plane equation from 
+template<typename T>
+cimg_library::CImg<T> plane_by_1_point_and_2_vectors(cimg_library::CImg<T> p0,cimg_library::CImg<T> u,cimg_library::CImg<T> v)
+{
+  cimg_library::CImg<T> plane;//plane equation: ax+by+cz+d=0
+  //check sizes
+  if(p0.width()!=1 || p0.height()<3 ||
+     u.is_sameXY(p0) || v.is_sameXY(p0)
+    )
+  {
+    std::cerr<<__func__<<" error: specified point or vector are not 3d vectors.\n"<<std::flush;
+    return plane;
+/* throw CImgInstanceException(_cimg_instance
+                                    "plane_by_*() : specified point or vector (%u,%u,%u,%u,%p) are not 3d vectors.",
+                                    cimg_instance,
+                                    p0._width,p0._height,p0._depth,p0._spectrum,p0._data);*/
+  }//check
+  //compute plane equation
+  plane.assign(1,4,1,1,0);//plane equation: ax+by+cz+d=0
+  cimg_forY(u,i) plane[i]=u[i];//(a,b,c)=u^v
+  T d=0;
+  cimg_forY(p0,i) d+=plane[i]*p0[i];
+  plane[3]=-d;//d=-(a*x0+b*y0+c*z0)
+  return plane;
+}//plane_by_1_point_and_2_vectors
+
+//! set plane equation from 3 points
+template<typename T>
+cimg_library::CImg<T> plane_by_3_points(cimg_library::CImg<T> p0,cimg_library::CImg<T> p1,cimg_library::CImg<T> p2)
+{
+  cimg_library::CImg<T> u(p1-p0);
+  cimg_library::CImg<T> v(p2-p0);
+  return plane_by_1_point_and_2_vectors(p0,u,v);
+}//plane_by_3_points
+
+//! set plane equation from 3 points
+template<typename T>
+CImg<T> plane_by_3_points(cimg_library::CImg<T> points)
+{
+//plane defined by 3 points: (point,0,0,x/y/z) x/y/z components in [pixel,pixel,plane] units
+  cimg_library::CImg<T> p0(1,3,1,1, points(0,0,0,0),points(0,0,0,1),points(0,0,0,2));
+  cimg_library::CImg<T> p1(1,3,1,1, points(1,0,0,0),points(1,0,0,1),points(1,0,0,2));
+  cimg_library::CImg<T> p2(1,3,1,1, points(2,0,0,0),points(2,0,0,1),points(2,0,0,2));
+  return plane_by_1_point_and_2_vectors(p0,p1,p2);
+}//plane_by_3_points
+
+//! main function begins program
 int main(int argc, char *argv[])
 { 
 //commmand line options
@@ -149,12 +196,22 @@ map.print("map grid");
   //depth map of mapping plane
 //! \todo . map any plane (passing through 3 points for example).
   cimg_library::CImg<float> z_map(map_img.width(),map_img.height());
-  cimg_library::CImg<float> plane(3,1,1,3);//plane defined by 3 points: (point,0,0,x/y/z) x/y/z components in [pixel,pixel,plane] units
+  cimg_library::CImg<float> points(3,1,1,3);//plane defined by 3 points: (point,0,0,x/y/z) x/y/z components in [pixel,pixel,plane] units
+//set z0 plane
+{
+points.fill(0);//set all to 0 by default, e.g. origin i.e. (0,0)
+points(1,0,0,0)=;//x axis i.e. (1,0)
+points(2,0,0,1)=;//y axis i.e. (0,1)
+cimg_forX(points,i) points(i,0,0,2)=z0;//set all z to z0
+points.print("points at z0")
+}
+  cimg_library::CImg<float> plane=plane_by_3_points(points);
+plane.print("plane");
   //bilinear(x,y) from 3 z positions
   cimg_forXY(z_map,x,y)
-    z_map(x,y)=z0;//! \todo . plane z=cst
-//    z_map(x,y)=-(ax+by+d)/c;//! \todo _ by 3 points: ax+by+cz+d=0
-
+    z_map(x,y)=z0;//plane z=cst
+//    z_map(x,y)=-(ax+by+d)/c;//! \todo . by 3 points: ax+by+cz+d=0
+z_map.print("z map of plane");
   //image mapping
   cimg_forXY(map_img,x,y)
     map_img(x,y)=src_img(map.linear_atXYZ(x,y,z_map(x,y),0),map.linear_atXYZ(x,y,z_map(x,y),1)); //closest
