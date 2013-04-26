@@ -161,6 +161,8 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
 
   //source image
   const cimg_library::CImg<int> src_img(input_file_name.c_str());
+//! \todo _ mkfct: init_map(...) load_map,map_image,map_expansion
+//! \todo _ mkfct: load_map(warping_file_name,map)
   //warping grid
   cimg_library::CImg<float> map(warping_file_name.c_str());//(2,2,>0,>2)
 map.print("map");
@@ -171,6 +173,7 @@ map.print("map");
   if(map.spectrum()<2) return -4;//(x,y(,z)) coordinates, i.e. x and y components for 2D warping or x, y and z for 3D warping
 
   //mapped image
+//! \todo _ mkfct: map_image(size_file_name or widthNheight,map_img)
   cimg_library::CImg<int> map_img;
   if(size_file_name=="")//user size
     map_img.assign(width,height);
@@ -190,10 +193,12 @@ size.print("size");
   }//warping size
 
   //warping grid expansion
+//! \todo _ mkfct: map_expansion(widthNheight OR map_img,map)
   map.resize(width,height,-100,-100,3/*bilinear*/);
 map.print("map grid");
 
   //depth map of mapping plane
+//! \todo _ mkfct: map_plane(points or z,map_img,z_map)
 //! \todo . map any plane (passing through 3 points for example).
   cimg_library::CImg<float> z_map(map_img.width(),map_img.height());
   cimg_library::CImg<float> points(3,1,1,3);//plane defined by 3 points: (point,0,0,x/y/z) x/y/z components in [pixel,pixel,plane] units
@@ -214,6 +219,7 @@ plane.print("plane");
   //! \todo . z map for plane
 //    z_map(x,y)=-(x*plane[0]+y*plane[1]+plane[3])/plane[2];//z=-(ax+by+d)/c
 z_map.print("z map of plane");
+//! \todo _ mkfct: map(map_img,map,z_map)
   //image mapping
   cimg_forXY(map_img,x,y)
     map_img(x,y)=src_img(map.linear_atXYZ(x,y,z_map(x,y),0),map.linear_atXYZ(x,y,z_map(x,y),1)); //closest
