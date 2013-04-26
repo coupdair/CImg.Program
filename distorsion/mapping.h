@@ -66,7 +66,7 @@ size.print("size");
 
 //! expand map regarding to map image sizes
 /**
- * \param [in] width: mapped image width.
+ * \param [in] width:  mapped image width.
  * \param [in] height: mapped image height.
  * \param [out] map: map grid (resized in this function).
 **/
@@ -88,6 +88,29 @@ int map_expansion(const cimg_library::CImg<T> &map_img,cimg_library::CImg<Tgrid>
 {
   return map_expansion(map_img.width(),map_img.height(),map);
 }//map_expansion
+
+//! initialisation of mapping container from parameters and files: gathering load_map, map_image and map_expansion functions
+/**
+ * \param [in] warping_file_name: file name from warping program containing warping coefficients.
+ * \param [out] map: map grid.
+ * \param [in] size_file_name: file name from warping program containing image sizes.
+ * \param [in/out] width:  mapped image width.
+ * \param [in/out] height: mapped image height.
+ * \param [out] map_img: mapped image.
+**/
+template<typename T,typename Tgrid>
+int init_mapping(const std::string &warping_file_name,cimg_library::CImg<Tgrid> &map,
+  const std::string &size_file_name,int &width,int &height,cimg_library::CImg<T> &map_img)
+{
+  int ret;
+  //warping grid
+  if(( ret=load_map(warping_file_name,map) )!=0) return ret;
+  //mapped image
+  if(( ret=map_image(size_file_name,width,height,map_img) )!=0) return ret;
+  //warping grid expansion related to mapped image sizes
+  if(( ret=map_expansion(width,height,map) )!=0) return ret;
+  return 0;
+}//init_mapping
 
 //! set plane equation from one point and normal vector 
 template<typename T>

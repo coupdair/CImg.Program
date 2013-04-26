@@ -113,17 +113,12 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   int ret;
   //source image
   const cimg_library::CImg<int> src_img(input_file_name.c_str());
-//! \todo _ mkfct: init_map(...) load_map,map_image,map_expansion
   //warping grid
   cimg_library::CImg<float> map;
-  if(( ret=load_map(warping_file_name,map) )!=0) return ret;
-
   //mapped image
   cimg_library::CImg<int> map_img;
-  if(( ret=map_image(size_file_name,width,height,map_img) )!=0) return ret;
-
-  //warping grid expansion related to mapped image sizes
-  if(( ret=map_expansion(width,height,map) )!=0) return ret;
+  //init warping grid and mapped image
+  if(( init_mapping(warping_file_name,map,size_file_name,width,height,map_img) )!=0) return ret;
 
   //depth map of mapping plane
   cimg_library::CImg<float> z_map;
