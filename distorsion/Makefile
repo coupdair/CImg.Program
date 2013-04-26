@@ -3,7 +3,7 @@ PROGRAMS = version mapping
 DOCUMENTATIONS = doc
 
 version_warping = v0.0.7
-version_mapping = v0.0.5.dev
+version_mapping = v0.0.6
 version_format=v0.0.2
 #version_cimg = 125
 version_cimg = 139
