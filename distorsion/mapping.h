@@ -112,12 +112,31 @@ int init_mapping(const std::string &warping_file_name,cimg_library::CImg<Tgrid> 
   return 0;
 }//init_mapping
 
-//! set plane equation from one point and normal vector 
+//! set plane equation from one point and normal vector
+/**
+ * set plane equation: ax+by+cz+d=0 from one point and normal vector (i.e. n=(a,b,c))
+ * \note plane is a CImg with (1,4,1,1) dimensions
+ * \note point and vectors are CImg with (1,3,1,1) dimensions, i.e. Cimg library 3d vector
+**/
 template<typename T>
 cimg_library::CImg<T> plane_by_1_point_and_1_normal_vector(cimg_library::CImg<T> p0,cimg_library::CImg<T> n)
 {
-//! \todo [high] _ check sizes (see plane_by_1_point_and_2_vectors)
-  cimg_library::CImg<T> plane;//plane equation: ax+by+cz+d=0
+  //check sizes
+  if(p0.width()!=1 || p0.height()<3 ||
+     !n.is_sameXY(p0)
+    )
+  {
+    std::cerr<<__func__<<" error: specified point or vector are not 3d vectors.\n"<<std::flush;
+p0.print("point p0");
+n.print("vector n");
+    cimg_library::CImg<T> plane;//plane equation: ax+by+cz+d=0, but empty here (on error)
+    return plane;
+/* throw CImgInstanceException(_cimg_instance
+                                    "plane_by_*() : specified point or vector (%u,%u,%u,%u,%p) are not 3d vectors.",
+                                    cimg_instance,
+                                    p0._width,p0._height,p0._depth,p0._spectrum,p0._data);*/
+  }//check
+  cimg_library::CImg<T> plane(1,4);//plane equation: ax+by+cz+d=0
   cimg_forY(n,i) plane[i]=n[i];//(a,b,c)=n=u^v
   T d=0;
   cimg_forY(p0,i) d+=plane[i]*p0[i];
@@ -125,44 +144,57 @@ cimg_library::CImg<T> plane_by_1_point_and_1_normal_vector(cimg_library::CImg<T>
   return plane;
 }//plane_by_1_point_and_1_normal_vector
 
-//! set plane equation from 
+//! set plane equation from 1 point and 2 tangential vectors
+/**
+ * set plane equation: ax+by+cz+d=0 from one point and 2 vectors within the plane (i.e. u^v=n)
+ * \note point and vectors are CImg with (1,3,1,1) dimensions, i.e. Cimg library 3d vector
+**/
 template<typename T>
 cimg_library::CImg<T> plane_by_1_point_and_2_vectors(cimg_library::CImg<T> p0,cimg_library::CImg<T> u,cimg_library::CImg<T> v)
 {
-  cimg_library::CImg<T> plane;//plane equation: ax+by+cz+d=0
   //check sizes
   if(p0.width()!=1 || p0.height()<3 ||
-     u.is_sameXY(p0) || v.is_sameXY(p0)
+     !u.is_sameXY(p0) || !v.is_sameXY(p0)
     )
   {
     std::cerr<<__func__<<" error: specified point or vector are not 3d vectors.\n"<<std::flush;
+p0.print("point p0");
+u.print("vector u");
+v.print("vector v");
+    cimg_library::CImg<T> plane;//plane equation: ax+by+cz+d=0, but empty here (on error)
     return plane;
-/* throw CImgInstanceException(_cimg_instance
-                                    "plane_by_*() : specified point or vector (%u,%u,%u,%u,%p) are not 3d vectors.",
-                                    cimg_instance,
-                                    p0._width,p0._height,p0._depth,p0._spectrum,p0._data);*/
   }//check
-  //compute plane equation
-  plane.assign(1,4,1,1,0);//plane equation: ax+by+cz+d=0
-//! \bug [high] _ make u^v as normal vector to plane
-  cimg_forY(u,i) plane[i]=u[i];//(a,b,c)=u^v
-  T d=0;
-  cimg_forY(p0,i) d+=plane[i]*p0[i];
-  plane[3]=-d;//d=-(a*x0+b*y0+c*z0)
-//! \todo [high] _ call plane_by_1_point_and_1_normal_vector(p0,u^v)
-  return plane;//plane_by_1_point_and_1_normal_vector(p0,u^v)
+//! \todo [high] . call plane_by_1_point_and_1_normal_vector(p0,u^v)
+  cimg_library::CImg<T> n=u.get_cross(v);//u^v
+  return plane_by_1_point_and_1_normal_vector(p0,n);
 }//plane_by_1_point_and_2_vectors
 
 //! set plane equation from 3 points
+/**
+ * set plane equation: ax+by+cz+d=0 from 3 points on this plane.
+ * \note points are CImg with (1,3,1,1) dimensions, i.e. Cimg library 3d vector
+**/
 template<typename T>
 cimg_library::CImg<T> plane_by_3_points(cimg_library::CImg<T> p0,cimg_library::CImg<T> p1,cimg_library::CImg<T> p2)
 {
+  //check sizes
+  if(p0.width()!=1 || p0.height()<3 ||
+     !p1.is_sameXY(p0) || !p2.is_sameXY(p0)
+    )
+  {
+    std::cerr<<__func__<<" error: specified point are not 3d vectors.\n"<<std::flush;
+p0.print("point p0");
+p1.print("point p1");
+p2.print("point p2");
+    cimg_library::CImg<T> plane;//plane equation: ax+by+cz+d=0, but empty here (on error)
+    return plane;
+  }//check
   cimg_library::CImg<T> u(p1-p0);
   cimg_library::CImg<T> v(p2-p0);
   return plane_by_1_point_and_2_vectors(p0,u,v);
 }//plane_by_3_points
 
-//! set plane equation from 3 points
+//! set plane equation from 3 points stored in a single matrix with point i as (i,0,0,[0-1]=[x,y,z])
 template<typename T>
 cimg_library::CImg<T> plane_by_3_points(cimg_library::CImg<T> points)
 {
@@ -184,7 +216,7 @@ int map_plane(const float/*points or */z0,const cimg_library::CImg<T> &map_img,c
 {
 //! \todo . map any plane (passing through 3 points for example).
   z_map.assign(map_img.width(),map_img.height());
-/*
+/**/
   cimg_library::CImg<float> points(3,1,1,3);//plane defined by 3 points: (point,0,0,x/y/z) x/y/z components in [pixel,pixel,plane] units
 //set z0 plane
 {
@@ -197,12 +229,12 @@ points.print("points at z0");
   //! \todo . plane by 3 points: ax+by+cz+d=0
   cimg_library::CImg<float> plane=plane_by_3_points(points);
 plane.print("plane");
-*/
+/**/
   //bilinear(x,y) from 3 z positions
   cimg_forXY(z_map,x,y)
-    z_map(x,y)=z0;//plane z=cst
+//    z_map(x,y)=z0;//plane z=cst
   //! \todo . z map for plane
-//    z_map(x,y)=-(x*plane[0]+y*plane[1]+plane[3])/plane[2];//z=-(ax+by+d)/c
+    z_map(x,y)=-(x*plane[0]+y*plane[1]+plane[3])/plane[2];//z=-(ax+by+d)/c
 z_map.print("z map of plane");
   return 0;
 }//map_plane
