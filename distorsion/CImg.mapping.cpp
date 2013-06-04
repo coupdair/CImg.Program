@@ -108,7 +108,7 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   const float Ax=cimg_option("-Ax",0.0,"x coordinate of A.");
   const float Ay=cimg_option("-Ay",0.0,"y coordinate of A.");
   const float Az=cimg_option("-Az",0.0,"z coordinate of A.");
-  pointA.assign(1,3,1,1, Ax,Ay,Az)
+  pointA.assign(1,3,1,1, Ax,Ay,Az);
   }
   const std::string output_file_name=cimg_option("-o","mapped_image.PNG","mapped image (i.e. destination).");
   ////mapped image size: w,h

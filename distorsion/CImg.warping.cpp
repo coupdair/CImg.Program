@@ -273,6 +273,7 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   if(cross_x_step!=cross_y_step) std::cerr<<"warning: X and Y cross steps differ.\n";
   const float cross_z_step=cimg_option("-sz",0.001,"step between planes  along Z for 3D warping (meter).");
   const int GUI_delay=cimg_option("-d",2345,"delay to check result on display at the end of the program in ms (e.g. 0 no wait, but result can be seen in \"color.png\" image file).");
+  const bool GUI_image_processing=cimg_option("--ip",false,"GUI: show image processing steps.");
   ///stop if help requested
   if(show_help) {/*print_help(std::cerr);*/return 0;}
   //basename
@@ -357,9 +358,13 @@ else //first plane
   cimg_library::CImg<int> blur_img=img[z].get_blur(cross_blur);
   int min=blur_img(pts(0),pts(1));
   int max=blur_img.max();
-//blur_img.display("blur");
   cimg_library::CImg<int> bin_img=blur_img.get_threshold((max-min)*cross_threshold+min);
-//bin_img.display("binary");
+  if(GUI_image_processing)
+  {
+    std::cerr<<"information: blur min="<<min<<", max="<<max<<"\n"<<std::flush;
+    blur_img.display("blur (-b option)");
+    bin_img.display("binary (-t option)");
+  }
   ///ROI around marker
   cimg_library::CImg<int> roi(2,2,1,4);//4 coner window corresponding to marker in source image: x,y=(x,y),c=(tl,tr,bl,br)
   cimg_forC(roi,c)
