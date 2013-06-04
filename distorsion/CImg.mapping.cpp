@@ -102,6 +102,14 @@ version: "+std::string(MAPPING_VERSION)+"\t(other library versions: warpingForma
   const std::string input_file_name= cimg_option("-i","image.TIF","image to map (i.e. source).");
   const std::string warping_file_name=cimg_option("-m","warping_coefficient.cimg","warping coefficient (i.e. 4 corner points on source image).");
   const float z0=cimg_option("-z",0.0,"z position of mapping plane in the 3D warped volume (e.g. -z 1.23 ; should be inside 3D warping indexes e.g. in range [0.0-1.0[ for 2 planes).");
+  cimg_help("plane by 3 points (A,B,C)");
+  cimg_library::CImg<float> pointA;
+  {
+  const float Ax=cimg_option("-Ax",0.0,"x coordinate of A.");
+  const float Ay=cimg_option("-Ay",0.0,"y coordinate of A.");
+  const float Az=cimg_option("-Az",0.0,"z coordinate of A.");
+  pointA.assign(1,3,1,1, Ax,Ay,Az)
+  }
   const std::string output_file_name=cimg_option("-o","mapped_image.PNG","mapped image (i.e. destination).");
   ////mapped image size: w,h
   int width= cimg_option("-W",321,"mapped image width.");

@@ -205,37 +205,53 @@ cimg_library::CImg<T> plane_by_3_points(cimg_library::CImg<T> points)
   return plane_by_3_points(p0,p1,p2);
 }//plane_by_3_points
 
-//! depth map of mapping plane
+//! depth map of mapping plane for specific constant z plane
 /**
  * \param [in] z0: z position of the plane
  * \param [in] map_img: mapped image for width and height values only.
  * \param [out] z_map: depth map set in this function.
 **/
 template<typename T,typename Tgrid>
-int map_plane(const float/*points or */z0,const cimg_library::CImg<T> &map_img,cimg_library::CImg<Tgrid> &z_map)
+int map_plane(const float z0,const cimg_library::CImg<T> &map_img,cimg_library::CImg<Tgrid> &z_map)
 {
-//! \todo . map any plane (passing through 3 points for example).
   z_map.assign(map_img.width(),map_img.height());
-/**/
+  //depth using constant z
+  cimg_forXY(z_map,x,y)
+    z_map(x,y)=z0;//plane z=cst
+z_map.print("z map of constant z plane");
+  return 0;
+}//map_plane
+
+/*
+//setup z0 plane equation using 3 points on this plane
+  //define the 3 points
   cimg_library::CImg<float> points(3,1,1,3);//plane defined by 3 points: (point,0,0,x/y/z) x/y/z components in [pixel,pixel,plane] units
-//set z0 plane
-{
-points.fill(0);//set all to 0 by default, e.g. origin i.e. (0,0)
-points(1,0,0,0)=1;//x axis i.e. (1,0)
-points(2,0,0,1)=1;//y axis i.e. (0,1)
+  points.fill(0);//set all to 0 by default, e.g. origin i.e. (0,0)
+  points(1,0,0,0)=1;//x axis i.e. (1,0)
+  points(2,0,0,1)=1;//y axis i.e. (0,1)
 cimg_forX(points,i) points(i,0,0,2)=z0;//set all z to z0
 points.print("points at z0");
-}
-  //! \todo . plane by 3 points: ax+by+cz+d=0
+  //plane by 3 points: ax+by+cz+d=0
   cimg_library::CImg<float> plane=plane_by_3_points(points);
 plane.print("plane");
-/**/
-  //bilinear(x,y) from 3 z positions
+*/
+
+//! depth map of mapping plane for any plane by 3 points
+/**
+ * \param [in] z0: z position of the plane
+ * \param [in] map_img: mapped image for width and height values only.
+ * \param [out] z_map: depth map set in this function.
+**/
+template<typename T,typename Tgrid>
+int map_plane(const cimg_library::CImg<float> points/*(3,1,1,3)*/,const cimg_library::CImg<T> &map_img,cimg_library::CImg<Tgrid> &z_map)
+{
+  z_map.assign(map_img.width(),map_img.height());
+  //set plane equation (i.e. ax+by+cz+d=0) from 3 points
+  cimg_library::CImg<float> plane=plane_by_3_points(points);
+  //depth using plane equation
   cimg_forXY(z_map,x,y)
-//    z_map(x,y)=z0;//plane z=cst
-  //! \todo . z map for plane
     z_map(x,y)=-(x*plane[0]+y*plane[1]+plane[3])/plane[2];//z=-(ax+by+d)/c
-z_map.print("z map of plane");
+z_map.print("z map of plane by 3 points");
   return 0;
 }//map_plane
 

@@ -1,6 +1,10 @@
 //STL
 #include <string>
 // Include CImg library file and use its main namespace
+///PlugIns
+#define cimg_plugin           "../CImg.PlugIn/PlugIn.CImg.h"
+//#define cimgnamespace_plugin  "../CImg.PlugIn/PlugIn.CImgLibrary.h"
+///CImg lib
 #include "CImg.h"
 using namespace cimg_library;
 
