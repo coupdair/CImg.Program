@@ -266,7 +266,8 @@ version: "+std::string(WARPING_VERSION)+"\t(library version: warpingFormat."+std
   int cross_x_nb=cimg_option("-nx",11,"number of markers along X axis.");
   int cross_y_nb=cimg_option("-ny", 8,"number of markers along Y axis.");
   int cross_z_nb=cimg_option("-nz", 1,"number of markers along Z axis for 3D warping (i.e. number of planes -i.e. images-).");
-  float cross_blur=cimg_option("-b",2," coefficient for bluring image before cross-threshold.");
+  float cross_blur=cimg_option("-b",2," coefficient for bluring image before light slope removal.");
+  int element_size=cimg_option("-s",23," size of structured element for light slope removal before threshold.");
   float cross_threshold=cimg_option("-t",0.5," coefficient for detection cross-threshold.");
   const float cross_x_step=cimg_option("-sx",0.005,"step between crosses along X (meter).");
   const float cross_y_step=cimg_option("-sy",0.005,"step between crosses along Y (meter).");
@@ -355,16 +356,20 @@ else //first plane
 
   //detect center
   ///threshold (using last clicked point)
-  cimg_library::CImg<int> blur_img=img[z].get_blur(cross_blur);
-  int min=blur_img(pts(0),pts(1));
-  int max=blur_img.max();
-  cimg_library::CImg<int> bin_img=blur_img.get_threshold((max-min)*cross_threshold+min);
+  cimg_library::CImg<int> blur_img=img[z].get_blur(cross_blur);//blur
+  cimg_library::CImg<int> slope_img=blur_img.get_dilate(element_size)-blur_img;//slope by morphomaths
+  int min=slope_img.min();
+  int max=slope_img(pts(0),pts(1));
+  cimg_library::CImg<int> bin_img=slope_img.get_threshold((max-min)*cross_threshold+min);
   if(GUI_image_processing)
   {
-    std::cerr<<"information: blur min="<<min<<", max="<<max<<"\n"<<std::flush;
     blur_img.display("blur (-b option)");
+    std::cerr<<"information: slope min="<<min<<", max="<<max<<"\n"<<std::flush;
+    slope_img.display("no slope (-s option)");
     bin_img.display("binary (-t option)");
   }
+  //negate
+  bin_img.normalize(1,0);
   ///ROI around marker
   cimg_library::CImg<int> roi(2,2,1,4);//4 coner window corresponding to marker in source image: x,y=(x,y),c=(tl,tr,bl,br)
   cimg_forC(roi,c)
