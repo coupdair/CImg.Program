@@ -51,11 +51,11 @@ int get_roi(const cimg_library::CImg<Timg> &binary_image,const cimg_library::CIm
   {//expand ROI along y axis in upper direction
 //! \todo [very low] better use count instead of max/min
     roi=binary_image.get_crop(x0,y0,x1,y1);
-    if((roi.get_shared_line(0)).max()==1
-     &&(roi.get_shared_line(0)).min()==1) expand(0)=true;
+    if((roi.get_shared_row(0)).max()==1
+     &&(roi.get_shared_row(0)).min()==1) expand(0)=true;
     else y0-=s;
-    if((roi.get_shared_line(roi.height()-1)).max()==1
-     &&(roi.get_shared_line(roi.height()-1)).min()==1) expand(1)=true;
+    if((roi.get_shared_row(roi.height()-1)).max()==1
+     &&(roi.get_shared_row(roi.height()-1)).min()==1) expand(1)=true;
     else y1+=s;
     if((roi.get_crop(0,0,0,roi.height()-1)).max()==1
      &&(roi.get_crop(0,0,0,roi.height()-1)).min()==1) expand(2)=true;
@@ -208,9 +208,9 @@ int get_point_in_next_plane(const int z,const cimg_library::CImgList<Timg> &img,
 {
 const unsigned char color[3]={255,255,255};
   //extract roi around previous cross
-  cimg_library::CImg<Troi> tl=map.get_shared_plane(z-1/*,c*/)-roi_size/2;//tl=pt-size/2
-  cimg_library::CImg<Troi> br=map.get_shared_plane(z-1/*,c*/)+roi_size/2;//br=pt+size/2
-(map.get_shared_plane(z-1,0)).print("point");
+  cimg_library::CImg<Troi> tl=map.get_shared_slice(z-1/*,c*/)-roi_size/2;//tl=pt-size/2
+  cimg_library::CImg<Troi> br=map.get_shared_slice(z-1/*,c*/)+roi_size/2;//br=pt+size/2
+(map.get_shared_slice(z-1,0)).print("point");
 roi_size.print("roi size");
 tl.print("tl");
 br.print("br");
@@ -387,11 +387,11 @@ roi_size.print("roi size (of roi 0)");
   if(cross_x_nb<0||cross_y_nb<0)
   {
     int nbx,nby;
-    cross_number_detection("X top    ",img[z],map.get_shared_plane(z,0),map.get_shared_plane(z,1),cross_x_nb,color_img,disp);//top    points
-    cross_number_detection("X bottom ",img[z],map.get_shared_plane(z,2),map.get_shared_plane(z,3),       nbx,color_img,disp);//bottom points
+    cross_number_detection("X top    ",img[z],map.get_shared_slice(z,0),map.get_shared_slice(z,1),cross_x_nb,color_img,disp);//top    points
+    cross_number_detection("X bottom ",img[z],map.get_shared_slice(z,2),map.get_shared_slice(z,3),       nbx,color_img,disp);//bottom points
     if(nbx!=cross_x_nb) std::cerr<<"warning: number of detected cross differ on top and bottom lines.\n"<<std::flush;
-    cross_number_detection("Y left   ",img[z],map.get_shared_plane(z,0),map.get_shared_plane(z,2),cross_y_nb,color_img,disp);//left   points
-    cross_number_detection("Y right  ",img[z],map.get_shared_plane(z,1),map.get_shared_plane(z,3),       nby,color_img,disp);//right  points
+    cross_number_detection("Y left   ",img[z],map.get_shared_slice(z,0),map.get_shared_slice(z,2),cross_y_nb,color_img,disp);//left   points
+    cross_number_detection("Y right  ",img[z],map.get_shared_slice(z,1),map.get_shared_slice(z,3),       nby,color_img,disp);//right  points
     if(nby!=cross_y_nb) std::cerr<<"warning: number of detected cross differ on left and right lines.\n"<<std::flush;
   }//detect number of crosses
   //! \todo [very low] draw other cross positions (not detected, but interpolated)
@@ -430,7 +430,7 @@ map.print("map 2D (x,y)");
   if(cross_z_nb>1)
   {//add z in c=(x,y,z)
     cimg_library::CImg<float> z_map(map.width(),map.height(),map.depth(),1);
-    cimg_forZ(z_map,z) (z_map.get_shared_plane(z)).fill(z);
+    cimg_forZ(z_map,z) (z_map.get_shared_slice(z)).fill(z);
     map.append(z_map,'c');
 map.print("map 3D (x,y,z)");
   }//3D warping

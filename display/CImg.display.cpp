@@ -149,7 +149,8 @@
  *  \li any other key  : change rendering type (i.e. increment type)
  *
  * GUI mouse options:
- *  \li \c left button: rotate *  \li \c middle button: move
+ *  \li \c left button: rotate
+ *  \li \c middle button: move
  *  \li \c wheel or \c right button: zoom in/out
  * \image html CImg_surface3D_all.png
 **/
@@ -288,9 +289,9 @@ PR(refresh_draw);
         CImg<unsigned char>(width,height,1,3,255).
           draw_grid(-50*100.0f/width,-50*100.0f/256,0,0,false,true,black,0.2f,0xCCCCCCCC,0xCCCCCCCC).
           draw_axes(0,image.width()-1.0f,255.0f,0.0f,black).
-          draw_graph(image_pp.get_shared_line(y,0,0),red,1,1,0,255,1).
-          draw_graph(image_pp.get_shared_line(y,0,1),green,1,1,0,255,1).
-          draw_graph(image_pp.get_shared_line(y,0,2),blue,1,1,0,255,1).
+          draw_graph(image_pp.get_shared_row(y,0,0),red,1,1,0,255,1).
+          draw_graph(image_pp.get_shared_row(y,0,1),green,1,1,0,255,1).
+          draw_graph(image_pp.get_shared_row(y,0,2),blue,1,1,0,255,1).
           draw_text(30,5,"Pixel (%d,%d)={%d %d %d}",black,0,1,13,xm,ym,val_red,val_green,val_blue).
           draw_line(xl,0,xl,draw_disp.height()-1,black,0.5f,hatch=cimg::rol(hatch)).
           display(draw_disp);
@@ -373,7 +374,7 @@ void display3D(CImg<T> image,
   if (file_o)
   {
     std::fprintf(stderr,"\n- Save 3d object as '%s'",cimg::basename(file_o)); std::fflush(stderr);
-    points.save_off(file_o,primitives,colors);
+    points.save_off(primitives,colors,file_o);
   }
 
   //display GUI information

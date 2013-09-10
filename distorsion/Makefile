@@ -1,12 +1,12 @@
 PROGRAMS = version warping mapping
-PROGRAMS = version mapping
 DOCUMENTATIONS = doc
 
 version_warping = v0.0.7
 version_mapping = v0.0.6
 version_format=v0.0.2
 #version_cimg = 125
-version_cimg = 139
+#version_cimg = 139
+version_cimg = 156
 OPT_LIBRARY = -DMAPPING_VERSION=\"$(version_mapping)\" -DWARPING_FORMAT_VERSION=\"$(version_format)\" -DWARPING_VERSION=\"$(version_warping)\"
 OPT_FORMAT = -Dcimg_use_jpeg -ljpeg -Dcimg_use_png -lpng -lz -Dcimg_use_tiff -ltiff
 OPT_XWINDOWS = -I/usr/X11R6/include -Dcimg_use_xshm -L/usr/X11R6/lib -lpthread -lX11 -lXext
@@ -24,7 +24,8 @@ version: Makefile
 	echo ${version_mapping} > VERSION_MAPPING
 	echo ${version_format} > VERSION_WARPING_FORMAT
 #	cd ../..; rm CImg; ln -s CImg-1.2.5 CImg; cd ./CImg.Program/distorsion/
-	cd ../..; rm CImg; ln -s CImg-1.3.9 CImg; cd ./CImg.Program/distorsion/
+#	cd ../..; rm CImg; ln -s CImg-1.3.9 CImg; cd ./CImg.Program/distorsion/
+	cd ../..; rm CImg; ln -s CImg-1.5.6 CImg; cd ./CImg.Program/distorsion/
 
 warping: CImg.warping.cpp Makefile
 	$(CPP) CImg.$@.cpp -o CImg.$@ $(OPT) $(VER)

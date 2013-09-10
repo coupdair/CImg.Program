@@ -1,3 +1,6 @@
+#compilation
+make
+
 #2D warp/mapping
 ##2D warping GUI
 CImg.warping -i camera1.TIF -ob camera1_ -nx 11 -ny 8 -s 0.005
