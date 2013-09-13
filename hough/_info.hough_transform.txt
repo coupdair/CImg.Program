@@ -1,5 +1,5 @@
 #compilation: linux X11
-g++ -o CImg.Hough_transform2d.linux32 CImg.Hough_transform2d.cpp -I../../CImg -Wall -W -ansi -pedantic -lm -O0 -ffast-math -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr
+g++ -o CImg.Hough_transform2d CImg.Hough_transform2d.cpp -I../../CImg -Wall -W -ansi -pedantic -lm -O0 -ffast-math -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr
 
 #run command line
 ./hough_transform2d.sh

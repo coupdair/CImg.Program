@@ -82,7 +82,7 @@ int main(int argc,char **argv)
   img.threshold(threshold);
 (img.get_resize(zoom*-100,zoom*-100)).display("threshold");
 //label
-  img.label_regions();
+  img.label();
 (img.get_resize(zoom*-100,zoom*-100)).display("label");
 //area (i.e. histogram use)
   CImg<int> aire;
