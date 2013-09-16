@@ -98,8 +98,8 @@ pos.print("position(x,y)");
   //display graph of x and y position
   if(n>1)
   {
-    (pos.get_shared_line(0)).display_graph("x position");
-    (pos.get_shared_line(1)).display_graph("y position");
+    (pos.get_shared_row(0)).display_graph("x position");
+    (pos.get_shared_row(1)).display_graph("y position");
   }
   return 0;
 }
