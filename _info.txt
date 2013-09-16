@@ -13,3 +13,6 @@ git clone git@github.com:coupdair/CImg.Program.git
 cd CImg.Program
 grep "define cimg_version" ../CImg/CImg.h > VERSION_CIMG
 
+#after compilation from CImg.Program/*/_info*.txt
+cp -p crop/CImg.crop display/CImg.display distorsion/CImg.warping distorsion/CImg.mapping fourier/CImg.Fourier_transform2d hough/CImg.Hough_transform2d labeling/CImg.labeling object_displacement/object_displacement object_displacement/object_displacement_loop operation/CImg.operation reduce/CImg.reduce ~/bin/
+
