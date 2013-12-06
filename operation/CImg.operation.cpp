@@ -15,12 +15,12 @@ using namespace cimg_library;
 int main(int argc,char **argv)
 {
   //Display program usage, when invoked from the command line with option '-h'.
-  cimg_usage("operation between 2 images: either maximum or subtraction.");
+  cimg_usage("operation between 2 images: either maximum, minimum, division or subtraction.");
   //Read image filename from the command line
   const char* file_i1=cimg_option("-i1","image1.PNG","Input  image 1");
   const char* file_i2=cimg_option("-i2","image2.PNG","Input  image 2");
-  const std::string operation=cimg_option("--operation","maximum","image operation either maximum or subtraction");
-  const char* file_o =cimg_option("-o" ,"imageS.PNG","Output image: either maximum R=max(1,2) or substraction R=1-2");
+  const std::string operation=cimg_option("--operation","maximum","image operation either maximum, minimum, division or subtraction");
+  const char* file_o =cimg_option("-o" ,"imageS.PNG","Output image: either maximum R=max(1,2),minimum R=min(1,2),division R=1/2 or substraction R=1-2");
   //help
   const bool help=cimg_option("-h",false,"display this help.");
   //exit on help request '-h' command line option
