@@ -1,4 +1,4 @@
 #fourier
-g++ -o CImg.Fourier_transform2d CImg.Fourier_transform2d.cpp -I../../CImg -Wall -W -lm -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr -Dcimg_use_fftw3 -lfftw3 -Dcimg_verbosity=4 && ./CImg.Fourier_transform2d
+g++ -o CImg.Fourier_transform2d CImg.Fourier_transform2d.cpp -I../../CImg -Wall -W -lm -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -Dcimg_use_xshm -Dcimg_use_xrandr -L/usr/X11R6/lib -lpthread -lX11 -lXext -lXrandr -Dcimg_use_fftw3 -lfftw3 -lfftw3_threads -Dcimg_verbosity=4 && ./CImg.Fourier_transform2d
 
 
