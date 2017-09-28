@@ -23,9 +23,6 @@ version: Makefile
 	echo ${version_warping} > VERSION_WARPING
 	echo ${version_mapping} > VERSION_MAPPING
 	echo ${version_format} > VERSION_WARPING_FORMAT
-#	cd ../..; rm CImg; ln -s CImg-1.2.5 CImg; cd ./CImg.Program/distorsion/
-#	cd ../..; rm CImg; ln -s CImg-1.3.9 CImg; cd ./CImg.Program/distorsion/
-	cd ../..; rm CImg; ln -s CImg-1.5.6 CImg; cd ./CImg.Program/distorsion/
 
 warping: CImg.warping.cpp Makefile
 	$(CPP) CImg.$@.cpp -o CImg.$@ $(OPT) $(VER)
