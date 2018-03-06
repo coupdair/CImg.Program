@@ -209,7 +209,7 @@ PR(disp.key());
       xm=disp.mouse_x()/zoom-img.width()*FOURIER_SPACE,
       ym=disp.mouse_y()/zoom;//*img.height()/disp.height();
       const int x=xm-img.width()/2, y=ym-img.height()/2;
-      const int r = (int)cimg::max(0.0f,(float)std::sqrt((float)x*x + y*y) - 3);
+      const int r = (int)std::max(0.0f,(float)std::sqrt((float)x*x + y*y) - 3);
       if (disp.button()&1) rmax=r;
       if (disp.button()&2) rmin=r;
       refresh_draw=true;
@@ -218,7 +218,7 @@ PR(disp.key());
     if(refresh_draw && xm>=0 && ym>=0)
     {
 //PR(rmin);
-      if (rmin>=rmax) rmin = cimg::max(rmax - 1,0);
+      if (rmin>=rmax) rmin = std::max(rmax - 1,0);
 PR(rmin);
 PR(rmax);
       mask.fill(0).draw_circle(mag.width()/2,mag.height()/2,rmax,one).
