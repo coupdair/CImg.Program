@@ -1,5 +1,8 @@
-#clone
+#clone (with CImg clone too)
+mkdir code
 cd code
+git clone https://framagit.org/dtschump/CImg.git
+ls CImg/CImg.h
 git clone git://github.com/coupdair/CImg.Program.git
 ls CImg.Program
 ls CImg.Program/*/_info*.txt
