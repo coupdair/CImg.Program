@@ -6,7 +6,7 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = CImg.display
 PROJECT_NUMBER         = v0.3.0
-OUTPUT_DIRECTORY       = /home/coudert/dataseb/code.CImg/CImg.Program/display/doc/
+OUTPUT_DIRECTORY       = /home/coudert/code.CImg/CImg.Program/display/doc/
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
@@ -25,7 +25,7 @@ ABBREVIATE_BRIEF       = "The $name class" \
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = NO
-STRIP_FROM_PATH        = /home/coudert/dataseb/code.CImg/CImg.Program/display
+STRIP_FROM_PATH        = /home/coudert/code.CImg/CImg.Program/display
 STRIP_FROM_INC_PATH    = 
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
@@ -93,7 +93,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = /home/coudert/dataseb/code.CImg/CImg.Program/display
+INPUT                  = /home/coudert/code.CImg/CImg.Program/display
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \
@@ -149,10 +149,10 @@ EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 
-EXAMPLE_PATH           = /home/coudert/dataseb/code.CImg/CImg.Program/display
+EXAMPLE_PATH           = /home/coudert/code.CImg/CImg.Program/display
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
-IMAGE_PATH             = /home/coudert/dataseb/code.CImg/CImg.Program/display
+IMAGE_PATH             = /home/coudert/code.CImg/CImg.Program/display
 INPUT_FILTER           = 
 FILTER_PATTERNS        = 
 FILTER_SOURCE_FILES    = NO

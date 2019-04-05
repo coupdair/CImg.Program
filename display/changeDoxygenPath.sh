@@ -1,6 +1,6 @@
 #!/bin/bash
 cp -p CImg.display.Doxygen CImg.display.Doxygen.old
-old=/data2/code/git/CImg.Program/display/
+old=/home/coudert/code.CImg/CImg.Program/display/
 new=$PWD/
 echo $old|sed 's/\//\\\//g' > old
 echo $new|sed 's/\//\\\//g' > new

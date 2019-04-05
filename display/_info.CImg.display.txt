@@ -8,7 +8,7 @@ g++ -o CImg.display CImg.display.cpp -I../../CImg -Wall -W -lm -ansi -pedantic -
 
 #documentation
 ./changeDoxygenPath.sh
-./DoxIt.sh
+./doxIt.sh
 
 #run
 ./CImg.display -i image.png
