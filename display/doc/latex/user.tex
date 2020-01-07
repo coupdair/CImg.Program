@@ -1,15 +1,21 @@
-\begin{Desc}
-\item[\hyperlink{todo__todo000001}{Todo}]use section (instead of paragraphs) and add table of contents (such as in mainpage)\end{Desc}
-\begin{Desc}
-\item[different type of display for image]\end{Desc}
-3 types of display in this software: \begin{itemize}
-\item 2D map (default) \item 1D graph ({\tt --1D} option) \item 3D surface ({\tt --3D} option)\end{itemize}
-others display command line options using {\tt -h} option 
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000001}{Todo}]use section (instead of paragraphs) and add table of contents (such as in mainpage)\end{DoxyRefDesc}
 
-\begin{VerbInclude}\begin{verbatim}
- CImg.display : display image as 2D map or/and 1D graph(s) or 3D surface. (Dec  2 2010, 23:35:25)
+
+\begin{DoxyParagraph}{different type of display for image}
+
+\end{DoxyParagraph}
+3 types of display in this software\-: \begin{DoxyItemize}
+\item 2\-D map (default) \item 1\-D graph ({\ttfamily --1\-D} option) \item 3\-D surface ({\ttfamily --3\-D} option)\end{DoxyItemize}
+others display command line options using {\ttfamily -\/h} option 
+\begin{DoxyVerbInclude}
+
+ 0;31;59mCImg.display: display image as 2D map or/and 1D graph(s) or 3D surface. (Feb  8 2018, 16:54:58)
 
     -i               image.png                Input image
+    --2x2D           false                    display 2 images
+    -i1              image1.png               Input image 1 (e.g. image1.png)
+    -i2              image2.png               Input image 2 (e.g. image2.png)
     --blur           -1                       Variance of gaussian pre-blurring (e.g. --blur 2.0)
     --norm           false                    normalize image between 0 and 255 for 8-bit display (e.g. --norm true)
     --1D             false                    display also profile (i.e. 1D graph with --1D true)
@@ -22,45 +28,41 @@ others display command line options using {\tt -h} option
     --render-type    2                        type of rendering (E[0-6], see GUI: render type)
     --color-type     true                     type of surface color: true image color, false constant color
     -h               true                     display this help.
-\end{verbatim}
-\end{VerbInclude}
+\end{DoxyVerbInclude}
 
 
-\begin{Desc}
-\item[2D map (default)]display image as map 
+\begin{DoxyParagraph}{2\-D map (default)}
+display image as map 
+\begin{DoxyCode}
+   ./CImg.display -i image.PNG
+\end{DoxyCode}
+ G\-U\-I keyboard options\-: \begin{DoxyItemize}
+\item {\ttfamily Ctrl+\-S}\-: save current view \end{DoxyItemize}
 
-\begin{Code}\begin{verbatim}   ./CImg.display -i image.PNG
-\end{verbatim}
-\end{Code}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{1\-D graph}
+display image as both map and 1\-D graph(s) (either X axis or Y axis) 
+\begin{DoxyCode}
+   ./CImg.display -i image.PNG --1D
+\end{DoxyCode}
+ G\-U\-I keyboard options\-: \begin{DoxyItemize}
+\item {\ttfamily c\-:} color \item {\ttfamily v\-:} value \item {\ttfamily l\-:} luminance \item {\ttfamily i\-:} intensity \item {\ttfamily Ctrl+\-S}\-: save current view\end{DoxyItemize}
+G\-U\-I mouse options\-: \begin{DoxyItemize}
+\item {\ttfamily left} button\-: X axis \item {\ttfamily right} button\-: Y axis \end{DoxyItemize}
 
- GUI keyboard options: \begin{itemize}
-\item {\tt Ctrl+S}: save current view \end{itemize}
-\end{Desc}
-\begin{Desc}
-\item[1D graph]display image as both map and 1D graph(s) (either X axis or Y axis) 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{3\-D surface}
+display image as 3\-D surface (e.\-g. Gouraud-\/shaded or isophotes render) 
+\begin{DoxyCode}
+   ./CImg.display -i image.PNG --3D
+\end{DoxyCode}
+ G\-U\-I keyboard options\-: \begin{DoxyItemize}
+\item {\ttfamily F\-:} toggle Fullscreen \item {\ttfamily Q} or E\-S\-C\-: Quit (i.\-e. exit)\end{DoxyItemize}
+load or save file\-: \begin{DoxyItemize}
+\item {\ttfamily S\-:} Save displayed image (i.\-e. 3\-D view) \item {\ttfamily O\-:} save p\-Ose (i.\-e. 3\-D view parameters) \item {\ttfamily R\-:} Read pose (i.\-e. 3\-D view parameters)\end{DoxyItemize}
+render type\-: \begin{DoxyItemize}
+\item {\ttfamily C\-:} color render (image or constant) \item {\ttfamily T\-:} poin\-Ts render \item {\ttfamily L\-:} Lines render \item {\ttfamily A\-:} f\-Aces render \item {\ttfamily H\-:} flat-\/s\-Haded faces render \item {\ttfamily G\-:} Gouraud-\/shaded faces render \item {\ttfamily P\-:} Phong-\/shaded faces render \item {\ttfamily I\-:} Isophotes render \item {\ttfamily Back\-Space} \-: change rendering type (i.\-e. decrement type) \item any other key \-: change rendering type (i.\-e. increment type)\end{DoxyItemize}
+G\-U\-I mouse options\-: \begin{DoxyItemize}
+\item {\ttfamily left} button\-: rotate \item {\ttfamily middle} button\-: move \item {\ttfamily wheel} or {\ttfamily right} button\-: zoom in/out  \end{DoxyItemize}
 
-\begin{Code}\begin{verbatim}   ./CImg.display -i image.PNG --1D
-\end{verbatim}
-\end{Code}
-
- GUI keyboard options: \begin{itemize}
-\item {\tt c:} color \item {\tt v:} value \item {\tt l:} luminance \item {\tt i:} intensity \item {\tt Ctrl+S}: save current view\end{itemize}
-GUI mouse options: \begin{itemize}
-\item {\tt left} button: X axis \item {\tt right} button: Y axis \end{itemize}
-\end{Desc}
-\begin{Desc}
-\item[3D surface]display image as 3D surface (e.g. Gouraud-shaded or isophotes render) 
-
-\begin{Code}\begin{verbatim}   ./CImg.display -i image.PNG --3D
-\end{verbatim}
-\end{Code}
-
- GUI keyboard options: \begin{itemize}
-\item {\tt F:} toggle Fullscreen \item {\tt Q} or ESC: Quit (i.e. exit)\end{itemize}
-load or save file: \begin{itemize}
-\item {\tt S:} Save displayed image (i.e. 3D view) \item {\tt O:} save pOse (i.e. 3D view parameters) \item {\tt R:} Read pose (i.e. 3D view parameters)\end{itemize}
-render type: \begin{itemize}
-\item {\tt C:} color render (image or constant) \item {\tt T:} poinTs render \item {\tt L:} Lines render \item {\tt A:} fAces render \item {\tt H:} flat-sHaded faces render \item {\tt G:} Gouraud-shaded faces render \item {\tt P:} Phong-shaded faces render \item {\tt I:} Isophotes render \item {\tt BackSpace} : change rendering type (i.e. decrement type) \item any other key : change rendering type (i.e. increment type)\end{itemize}
-GUI mouse options: \begin{itemize}
-\item {\tt left} button: rotate \item {\tt middle} button: move \item {\tt wheel} or {\tt right} button: zoom in/out  \end{itemize}
-\end{Desc}
+\end{DoxyParagraph}

@@ -1,4 +1,4 @@
-.TH "user" 3 "13 Apr 2012" "Version v0.3.0" "CImg.display" \" -*- nroff -*-
+.TH "user" 3 "Tue Jan 7 2020" "Version v0.3.0" "CImg.display" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -8,7 +8,9 @@ user \- user guide
 use section (instead of paragraphs) and add table of contents (such as in mainpage)
 .RE
 .PP
-\fBdifferent type of display for image\fP.RS 4
+.PP
+\fBdifferent type of display for image\fP
+.RS 4
 
 .RE
 .PP
@@ -26,9 +28,12 @@ others display command line options using \fC-h\fP option
 .PP
 .nf
 
- CImg.display : display image as 2D map or/and 1D graph(s) or 3D surface. (Dec  2 2010, 23:35:25)
+ 0;31;59mCImg.display: display image as 2D map or/and 1D graph(s) or 3D surface. (Feb  8 2018, 16:54:58)
 
     -i               image.png                Input image
+    --2x2D           false                    display 2 images
+    -i1              image1.png               Input image 1 (e.g. image1.png)
+    -i2              image2.png               Input image 2 (e.g. image2.png)
     --blur           -1                       Variance of gaussian pre-blurring (e.g. --blur 2.0)
     --norm           false                    normalize image between 0 and 255 for 8-bit display (e.g. --norm true)
     --1D             false                    display also profile (i.e. 1D graph with --1D true)
@@ -45,11 +50,12 @@ others display command line options using \fC-h\fP option
 .fi
 .PP
 .PP
-\fB2D map (default)\fP.RS 4
+\fB2D map (default)\fP
+.RS 4
 display image as map 
 .PP
 .nf
-   ./CImg.display -i image.PNG
+   \&./CImg\&.display -i image\&.PNG
 
 .fi
 .PP
@@ -61,11 +67,12 @@ display image as map
 .PP
 .RE
 .PP
-\fB1D graph\fP.RS 4
+\fB1D graph\fP
+.RS 4
 display image as both map and 1D graph(s) (either X axis or Y axis) 
 .PP
 .nf
-   ./CImg.display -i image.PNG --1D
+   \&./CImg\&.display -i image\&.PNG --1D
 
 .fi
 .PP
@@ -93,11 +100,12 @@ GUI mouse options:
 .PP
 .RE
 .PP
-\fB3D surface\fP.RS 4
-display image as 3D surface (e.g. Gouraud-shaded or isophotes render) 
+\fB3D surface\fP
+.RS 4
+display image as 3D surface (e\&.g\&. Gouraud-shaded or isophotes render) 
 .PP
 .nf
-   ./CImg.display -i image.PNG --3D
+   \&./CImg\&.display -i image\&.PNG --3D
 
 .fi
 .PP
@@ -107,17 +115,17 @@ display image as 3D surface (e.g. Gouraud-shaded or isophotes render)
 .IP "\(bu" 2
 \fCF:\fP toggle Fullscreen 
 .IP "\(bu" 2
-\fCQ\fP or ESC: Quit (i.e. exit)
+\fCQ\fP or ESC: Quit (i\&.e\&. exit)
 .PP
 load or save file: 
 .PD 0
 
 .IP "\(bu" 2
-\fCS:\fP Save displayed image (i.e. 3D view) 
+\fCS:\fP Save displayed image (i\&.e\&. 3D view) 
 .IP "\(bu" 2
-\fCO:\fP save pOse (i.e. 3D view parameters) 
+\fCO:\fP save pOse (i\&.e\&. 3D view parameters) 
 .IP "\(bu" 2
-\fCR:\fP Read pose (i.e. 3D view parameters)
+\fCR:\fP Read pose (i\&.e\&. 3D view parameters)
 .PP
 render type: 
 .PD 0
@@ -139,9 +147,9 @@ render type:
 .IP "\(bu" 2
 \fCI:\fP Isophotes render 
 .IP "\(bu" 2
-\fCBackSpace\fP : change rendering type (i.e. decrement type) 
+\fCBackSpace\fP : change rendering type (i\&.e\&. decrement type) 
 .IP "\(bu" 2
-any other key : change rendering type (i.e. increment type)
+any other key : change rendering type (i\&.e\&. increment type)
 .PP
 GUI mouse options: 
 .PD 0
