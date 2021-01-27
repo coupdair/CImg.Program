@@ -501,6 +501,8 @@ int main(int argc,char **argv)
   {
     // Load an image, transform it to a color image (if necessary) and blur it with the standard deviation sigma.
     CImg<> image(file_i);
+    image.print(file_i);
+
 ///pre-processing
     if(normalize) image.normalize(0,255);
     if(sigma>0.0) image.blur((float)sigma);
@@ -508,7 +510,8 @@ int main(int argc,char **argv)
     if(display_1D)
 ///display as image (2D map) and profiles (1D graph)
     {
-      display1D2D(image);
+      if(image.height()==1) image.display_graph(file_i);
+      else display1D2D(image);
     }//display_1D
     else if(display_3D)
 ///display as surface (3D)

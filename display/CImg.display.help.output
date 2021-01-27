@@ -1,0 +1,19 @@
+
+ 0;31;59mCImg.display: display image as 2D map or/and 1D graph(s) or 3D surface. (Jan 27 2021, 12:41:04)
+
+    -i               image.png                Input image
+    --2x2D           false                    display 2 images
+    -i1              image1.png               Input image 1 (e.g. image1.png)
+    -i2              image2.png               Input image 2 (e.g. image2.png)
+    --blur           -1                       Variance of gaussian pre-blurring (e.g. --blur 2.0)
+    --norm           false                    normalize image between 0 and 255 for 8-bit display (e.g. --norm true)
+    --1D             false                    display also profile (i.e. 1D graph with --1D true)
+    --3D             false                    display as 3D surface
+    -o               0                        Output 3D object
+    -z               0.25                     Aspect ratio along z-axis
+    -di              10                       Step for isophote skipping
+    -pi              0                        Input 3D pose  (e.g. pose.cimg)
+    -po              pose.cimg                Output 3D pose (e.g. pose.cimg)
+    --render-type    2                        type of rendering (E[0-6], see GUI: render type)
+    --color-type     true                     type of surface color: true image color, false constant color
+    -h               true                     display this help.
