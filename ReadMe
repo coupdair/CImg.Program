@@ -4,6 +4,7 @@ collection of programs using CImg library
         CImg.display
 
     basic image processing
+        CImg.autocrop
         CImg.crop
         CImg.operation
         CImg.labeling
