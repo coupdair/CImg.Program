@@ -64,8 +64,8 @@ int main(int argc,char **argv) {
   "  examples:\n"
   "  ./CImg.crop -i logo.png -o logo_autocrop.png\n"
   );
-  const char* file_i = cimg_option("-i","image","Input image");
-  const char* file_o = cimg_option("-o","_","Output image UBLR");
+  const char* file_i = cimg_option("-i","image.cimg","Input image");
+  const char* file_o = cimg_option("-o","cropped_image.cimg","Output reduced image");
   //help
   const bool help=cimg_option("-h",false,"display this help.");
   //exit on help request '-h' command line option
@@ -77,5 +77,4 @@ int main(int argc,char **argv) {
   image.autocrop().save(file_o);
   }//crop
   return 0;
-}
-
+}//main
