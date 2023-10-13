@@ -1,6 +1,6 @@
 collection of programs using CImg library
 
-__TOC__
+<!--- place@of@TOC --->
 
 # summary
 
@@ -44,5 +44,12 @@ git clone ${gitbub}coupdair/CImg.Program
 # compile
 
 ~~~ { .bash }
-TODO
+#ex. auto crop
+cd CImg.Program/autocrop/
+cat _info.autocrop.txt 
+
+#compile autocrop
+g++ -o CImg.autocrop CImg.autocrop.cpp -I../../CImg -Wall -W -lm -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -lpthread -Dcimg_display=0 -Dcimg_use_tiff -ltiff
+#run autocrop
+./CImg.autocrop -i logo.png -o logo_autocrop.png && identify logo_autocrop.png logo.png && display logo_autocrop.png
 ~~~
