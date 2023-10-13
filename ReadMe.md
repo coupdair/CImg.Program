@@ -1,6 +1,12 @@
 collection of programs using CImg library
 
-<!--- place@of@TOC --->
+<!--- begin@of@TOC --->
+# Table of contents
+
+1. [summary](#summary)
+1. [clone](#clone)
+1. [compile](#compile)
+<!--- end@of@TOC --->
 
 # summary
 
