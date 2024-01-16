@@ -12,21 +12,19 @@ using namespace cimg_library;
 
 int main(int argc,char **argv)
 {
-  //Display program usage, when invoked from the command line with option '-h'.
-  cimg_usage("reduce image along one direction.");
-  //Read image filename from the command line
-  const char* file_i=cimg_option("-i","image.PNG","Input image");
-  const char* file_o=cimg_option("-o","profile123.PNG","Output profile");
-  //help
-  const bool help=cimg_option("-h",false,"display this help.");
-  //exit on help request '-h' command line option
-  if(help) return 0;
-  //Load an image
-  const CImg<int> image(file_i);
-        CImg<float> profile(image.width(),1,1,1,0);//fill 0
-  image.display(file_i);
-  profile=image.get_shared_row(image.width()/2);
-  profile.display_graph("profile");
-  return 0;
-}
+	
+	  CImg<unsigned char> image("CImg_logo.png"), visu(500,400,1,3,0);
+  const unsigned char red[] = { 255,0,0 }, green[] = { 0,255,0 }, blue[] = { 0,0,255 };
+  image.blur(2.5);
+  CImgDisplay main_disp(image,"Click a point"), draw_disp(visu,"Intensity profile");
+  while (!main_disp.is_closed() && !draw_disp.is_closed()) {
+    main_disp.wait();
+    if (main_disp.button() && main_disp.mouse_y()>=0) {
+      const int y = main_disp.mouse_y();
+      visu.fill(0).draw_graph(image.get_crop(0,y,0,0,image.width()-1,y,0,0),red,1,1,0,255,0);
+      visu.draw_graph(image.get_crop(0,y,0,1,image.width()-1,y,0,1),green,1,1,0,255,0);
+      visu.draw_graph(image.get_crop(0,y,0,2,image.width()-1,y,0,2),blue,1,1,0,255,0).display(draw_disp);
+      }
+    }
 
+}
