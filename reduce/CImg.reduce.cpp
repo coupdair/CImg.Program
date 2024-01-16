@@ -24,7 +24,7 @@ int main(int argc,char **argv)
   //Load an image
   const CImg<unsigned char> image(file_i);
         CImg<unsigned char> profile(image.width(),1,1,1,0);//fill 0
-        CImg<unsigned char> profimg(image.width(),image.height(),1,1,0);//fill 0
+        CImg<unsigned char> profimg(image.width(),image.height(),1,3,0);//fill 0
   const unsigned char red[] = { 255,0,0 }, green[] = { 0,255,0 }, blue[] = { 0,0,255 };
   //image (lock)
 //  image.display(file_i);
@@ -38,7 +38,7 @@ int main(int argc,char **argv)
  {
   //reset display
   disp.assign(image.width(),image.height());
-  disp.set_title("live profile");
+  disp.set_title("live profile from image");
   image.display(disp);
   disp.wait(555);
 
@@ -48,7 +48,7 @@ int main(int argc,char **argv)
     disp.set_title("live profile#%d/%d",i,image.height());
     profile=image.get_shared_row(i++);
     //profile.print("image(*,i)",false);
-    profimg.fill(0).draw_graph(profile,red,1,1,0,255,0).display(disp);
+    profimg.fill(0).draw_graph(profile,green,1,1,0,255,0).display(disp);
     //break on mouse
     if (disp.button()) break;
     //reset line
