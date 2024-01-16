@@ -46,7 +46,7 @@ int main(int argc,char **argv)
   while( !disp.is_closed() )
   {
     disp.wait(222);
-    disp.set_title("live profile#%d",i);
+    disp.set_title("live profile#%d/%d",i,image.height());
     profile=image.get_shared_row(i++);
     //profile.print("image(*,i)",false);
     profimg.fill(0).draw_graph(profile,red,1,1,0,255,0).display(disp);
