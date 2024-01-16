@@ -11,7 +11,7 @@ using namespace cimg_library;
 #endif
 
 int main(int argc,char **argv)
-{/**/
+{
   //Display program usage, when invoked from the command line with option '-h'.
   cimg_usage("reduce image along one direction.");
   //Read image filename from the command line
@@ -24,6 +24,8 @@ int main(int argc,char **argv)
   //Load an image
   const CImg<unsigned char> image(file_i);
         CImg<unsigned char> profile(image.width(),1,1,1,0);//fill 0
+        CImg<unsigned char> profimg(image.width(),image.height(),1,1,0);//fill 0
+  const unsigned char red[] = { 255,0,0 }, green[] = { 0,255,0 }, blue[] = { 0,0,255 };
   image.display(file_i);
   image.print("image");
 //  profile=image.get_shared_row(image.width()/2);
@@ -46,22 +48,8 @@ int main(int argc,char **argv)
     image.print("image loop");
     profile=image.get_shared_row(i++);
     profile.print("image[i]",false);
-    image.display(disp);
+    profimg.fill(0).draw_graph(profile,red,1,1,0,255,0).display(disp);
     if(i==image.width()) {i=0;}
   }
-  /**/
-/*
-  	  CImg<unsigned char> image("CImg_logo.png"), visu(500,400,1,3,0);
-  const unsigned char red[] = { 255,0,0 }, green[] = { 0,255,0 }, blue[] = { 0,0,255 };
-  image.blur(2.5);
-  CImgDisplay main_disp(image,"loop over lines"), draw_disp(visu,"Intensity profile");
-  int i=0;
-  while (!main_disp.is_closed() && !draw_disp.is_closed()) {
-    main_disp.wait(222);
-    
-      visu.fill(0).draw_graph(image.get_shared_row(i++),red,1,1,0,255,0).display(draw_disp);
-      if(i==image.width()) {i=0;}
-    }
-*/
   return 0;
 }//main
