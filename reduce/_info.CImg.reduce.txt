@@ -8,6 +8,5 @@ g++ -o CImg.reduce CImg.reduce.cpp -I ../../CImg -Wall -W -lm -ansi -pedantic -O
 ./DoxIt.sh
 
 #run
-./CImg.reduce -R image1.png   -G profile2.png -B profile2.png -o profile1.png
-./CImg.reduce -R profile1.png -G profile2.png -B profile2.png
+./CImg.reduce -i CImg_logo.png
 
