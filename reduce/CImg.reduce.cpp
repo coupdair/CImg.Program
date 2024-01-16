@@ -30,27 +30,34 @@ int main(int argc,char **argv)
 //  image.display(file_i);
   image.print("image");
   //line
-  profile=image.get_shared_row(image.height()/2);
+  int i=image.height()/2;
+  profile=image.get_shared_row(i);
 
   CImgDisplay disp;
+ while( true )
+ {
+  //reset display
   disp.assign(image.width(),image.height());
   disp.set_title("live profile");
   image.display(disp);
   disp.wait(555);
 
-  //line (lock)
-//  profile.display_graph("middle profile");
-
   //line loop
-  int i=image.height()/2;
   while( !disp.is_closed() )
   {
-    disp.wait(222);
     disp.set_title("live profile#%d/%d",i,image.height());
     profile=image.get_shared_row(i++);
     //profile.print("image(*,i)",false);
     profimg.fill(0).draw_graph(profile,red,1,1,0,255,0).display(disp);
+    //reset line
     if(i==image.height()) {i=0;}
-  }
+    disp.wait(222);
+  }//live loop
+  
+  //line (lock)
+  char title[512];
+  cimg_sprintf(title,"profile#%d/%d",i,image.height());
+  profile.display_graph(title);
+ }//lock loop
   return 0;
 }//main
