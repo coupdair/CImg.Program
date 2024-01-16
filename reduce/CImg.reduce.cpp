@@ -11,7 +11,7 @@ using namespace cimg_library;
 #endif
 
 int main(int argc,char **argv)
-{/*
+{/**/
   //Display program usage, when invoked from the command line with option '-h'.
   cimg_usage("reduce image along one direction.");
   //Read image filename from the command line
@@ -22,8 +22,8 @@ int main(int argc,char **argv)
   //exit on help request '-h' command line option
   if(help) return 0;
   //Load an image
-  const CImg<int> image(file_i);
-        CImg<int> profile(image.width(),1,1,1,0);//fill 0
+  const CImg<unsigned char> image(file_i);
+        CImg<unsigned char> profile(image.width(),1,1,1,0);//fill 0
   image.display(file_i);
   image.print("image");
 //  profile=image.get_shared_row(image.width()/2);
@@ -49,7 +49,8 @@ int main(int argc,char **argv)
     image.display(disp);
     if(i==image.width()) {i=0;}
   }
-  */
+  /**/
+/*
   	  CImg<unsigned char> image("CImg_logo.png"), visu(500,400,1,3,0);
   const unsigned char red[] = { 255,0,0 }, green[] = { 0,255,0 }, blue[] = { 0,0,255 };
   image.blur(2.5);
@@ -61,6 +62,6 @@ int main(int argc,char **argv)
       visu.fill(0).draw_graph(image.get_shared_row(i++),red,1,1,0,255,0).display(draw_disp);
       if(i==image.width()) {i=0;}
     }
-
+*/
   return 0;
 }//main
