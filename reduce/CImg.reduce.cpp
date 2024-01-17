@@ -16,7 +16,6 @@ int main(int argc,char **argv)
   cimg_usage("reduce image along one direction.");
   //Read image filename from the command line
   const char* file_i=cimg_option("-i","image.PNG","Input image");
-  const char* file_o=cimg_option("-o","profile123.PNG","Output profile");
   //help
   const bool help=cimg_option("-h",false,"display this help.");
   //exit on help request '-h' command line option
