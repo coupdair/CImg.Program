@@ -47,6 +47,12 @@ git clone ${gitbub}coupdair/CImg
 git clone ${gitbub}coupdair/CImg.Program
 ~~~
 
+# package
+
+~~~ { .bash }
+sudo apt install -y  g++ libxrandr-dev   libtiff-dev libpng-dev
+~~~
+
 # compile
 
 ~~~ { .bash }
