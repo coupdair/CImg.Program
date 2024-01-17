@@ -49,6 +49,7 @@ int main(int argc,char **argv)
     profile=image.get_shared_row(i++);
     //profile.print("image(*,i)",false);
     profimg.fill(0).draw_graph(profile,green,1,1,0,255,0).display(disp);
+    //profile.display_graph(disp);//lock
     //break on mouse
     if (disp.button()) break;
     //reset line
